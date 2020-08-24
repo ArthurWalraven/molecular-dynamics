@@ -19,7 +19,7 @@
 #define LOG(format, exp)	printf("%s:" STRINGFY(__LINE__) ": " #exp " = " format "\n", __func__, (exp))
 
 #define BENCH(str, exp)	{\
-	puts("\nStart: " str);\
+	puts(!(str[0]) ? "\nStart" : "\nStart: " str);\
 	struct rusage resource_usage;\
 	getrusage(RUSAGE_SELF, &resource_usage);\
 	const struct timeval usertime_start = resource_usage.ru_utime;\
@@ -31,6 +31,14 @@
 \
 	printf("End: " str " (Ellapsed time: %.4fs)\n", (usertime_end.tv_sec - usertime_start.tv_sec) + (usertime_end.tv_usec - usertime_start.tv_usec)/1e6f);\
 }
+
+#ifdef NDEBUG
+#define TEST(exp) (void) (0);
+#else
+#define TEST(exp) {\
+	BENCH("", exp)\
+}
+#endif
 
 __always_inline
 uint64_t rand_fast() {
