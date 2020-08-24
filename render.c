@@ -295,7 +295,7 @@ void render__animation(const int W, const int H, const int T, const uint8_t fram
 }
 
 void render__test_BMP() {
-    const int N = 1 << 9;
+    const int N = 1 << 11;
     uint8_t (*canvas)[N] = malloc(N*N);
     if (!canvas) {
         perror("Error on frame creation");
