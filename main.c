@@ -10,7 +10,7 @@
 int main(const int argc, char * const argv[]) {
     const Params params = process_arguments(argc, argv);
 
-    printf("Allocating %.2f MiB...\n", (params.n_frames * params.frame_H * params.frame_W) / 0x1p20f);
+    printf("Allocating animation buffer: [%d] %dx%d GIF (pixel stream of %.2f MiB)\n", params.n_frames, params.frame_W, params.frame_H, (params.n_frames * params.frame_H * params.frame_W) / 0x1p20f);
     uint8_t (*frames)[params.frame_H][params.frame_W] = calloc(params.n_frames * params.frame_H * params.frame_W, sizeof(frames[0][0][0]));
     if (!frames) {
         perror("Error on buffer creation");
