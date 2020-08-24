@@ -8,26 +8,6 @@
 
 
 int main(const int argc, char * const argv[]) {
-    // const int N = 1 << 14;
-    // uint8_t (*frac)[N] = malloc(N*N);
-    // if (!frac) {
-    //     perror("Error on buffer creation");
-    //     exit(EXIT_FAILURE);
-    // }
-
-    // for (int i = 0; i < N; ++i)
-    // {
-    //     for (int j = 0; j < N; ++j)
-    //     {
-    //         frac[i][j] = roundf(((i ^ j) & (N-1)) * 256.f / N);
-    //     }
-    // }
-    // to_BMP(N, N, frac);
-
-    // free(frac);
-    // return 0;
-
-
     const Params params = process_arguments(argc, argv);
 
     printf("Allocating %.2f MiB...\n", (params.n_frames * params.frame_H * params.frame_W) / 0x1p20f);

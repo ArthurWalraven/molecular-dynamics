@@ -14,8 +14,8 @@ inline int render__meters_to_pixels(const float m, const int resolution) {
     return ceilf(m * resolution);
 }
 
-void to_BMP(const int W, const int H, const uint8_t frame[][W]) {
-    assert(!(W & 0b11) && "Not implemented: frame width is not a multiple of 4");
+static void to_BMP(const int W, const int H, const uint8_t canvas[][W]) {
+    assert(!(W & 0b11) && "Not implemented: canvas width is not a multiple of 4");
 
     static int frame_counter = -1;
     ++frame_counter;
@@ -77,7 +77,7 @@ void to_BMP(const int W, const int H, const uint8_t frame[][W]) {
     }
     fwrite(shades_of_gray, 4, 256, fp);
 
-    fwrite(frame, 1, W * H, fp);
+    fwrite(canvas, 1, W * H, fp);
 
 
     fclose(fp);
@@ -292,4 +292,24 @@ void render__animation(const int W, const int H, const int T, const uint8_t fram
     // system("convert -delay 2 " FRAME_FILE_NAME_PREFIX "*.bmp animation.gif");
 
     to_GIF(W, H, T, frame, FPS);
+}
+
+void test_BMP() {
+    const int N = 1 << 14;
+    uint8_t (*canvas)[N] = malloc(N*N);
+    if (!canvas) {
+        perror("Error on frame creation");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < N; ++i)
+    {
+        for (int j = 0; j < N; ++j)
+        {
+            canvas[i][j] = roundf(((i ^ j) & (N-1)) * 256.f / N);
+        }
+    }
+    to_BMP(N, N, canvas);
+
+    free(canvas);
 }
