@@ -6,11 +6,11 @@ inline float gravity(const vec a, const vec b) {
     return G / dist_sq(b, a);
 }
 
-inline void physics__random_populate(atom a[], const int n, const float box_radius) {
+inline void physics__random_populate(atom a[], const int n, const float box_radius, const float avg_speed) {
     assert(n >= 0);
     assert(box_radius > 0);
 
-    const float speed_range = box_radius * 2.0;
+    const float speed_range = box_radius * avg_speed;
 
     for (int i = 0; i < n; ++i) {
         a[i].p.x = (2 * randf() - 1) * box_radius;

@@ -16,6 +16,7 @@ typedef struct
     int n;                  // Number of particles
     float simulation_time;  // In seconds
     float box_radius;       // In meters
+    float avg_speed;        // In m/s
     float ups;              // Updates per second
     float fps;              // Frames per second
     float ppm;              // Pixels per meter

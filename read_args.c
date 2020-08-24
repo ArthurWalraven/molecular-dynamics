@@ -7,12 +7,14 @@ Params process_arguments(const int argc, char * const argv[]) {
         .ups = 100.0,
         .fps = 50.0,
         .ppm = 8.0,
+        .avg_speed = 2.0
     };
 
     struct option long_options[] = {
         {"n",           required_argument, NULL, 'n'},
         {"t",           required_argument, NULL, 't'},
         {"box-radius",  required_argument, NULL, 'b'},
+        {"avg-speed",   required_argument, NULL, 's'},
         {"ups",         required_argument, NULL, 'u'},
         {"fps",         required_argument, NULL, 'f'},
         {"resolution",  required_argument, NULL, 'r'},
@@ -36,6 +38,10 @@ Params process_arguments(const int argc, char * const argv[]) {
             
             case 'b':
                 items_read = sscanf(optarg, " %f", &parameters.box_radius);
+                break;
+            
+            case 's':
+                items_read = sscanf(optarg, " %f", &parameters.avg_speed);
                 break;
             
             case 'u':

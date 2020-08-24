@@ -21,7 +21,7 @@ int main(const int argc, char * const argv[]) {
     //* Simulation
     BENCH("Simulation",
         atom a[params.n];
-        physics__random_populate(a, params.n, params.box_radius);
+        physics__random_populate(a, params.n, params.box_radius, params.avg_speed);
         
         int frame_counter = 0;
         float frame_time_tracker = 0;
