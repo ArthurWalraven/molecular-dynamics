@@ -95,7 +95,7 @@ static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][
     const uint8_t BIT_DEPTH = 7;
     const int NUMBER_OF_COLOURS = 1 << BIT_DEPTH;
     
-    struct GIF_Header {
+    struct __attribute__((packed)) GIF_Header {
         // From https://www.w3.org/Graphics/GIF/spec-gif89a.txt
         char     signature[3];
         char     version[3];
@@ -108,8 +108,7 @@ static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][
         uint8_t  background_colour_index;
         uint8_t  _aspect_ratio;
         uint8_t  colour_table[NUMBER_OF_COLOURS][3];
-    } __attribute__((packed))
-    header = {
+    } header = {
         .signature = {'G', 'I', 'F'},
         .version = {'8', '9', 'a'},
         .width_px = W,
@@ -129,15 +128,14 @@ static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][
         header.colour_table[i][2] = i * 2;
     }
 
-    struct Application_Extension {
+    struct __attribute__((packed)) Application_Extension {
         // From https://en.wikipedia.org/wiki/GIF#Animated_GIF
         uint8_t extension_introducer;
         uint8_t application_label;
         uint8_t block_size;
         char    application_identifier[8];
         char    application_authentication_code[3];
-    } __attribute__((packed))
-    const netscape_application_block = {
+    } const netscape_application_block = {
         .extension_introducer = '!',
         .application_label = 0xFF,
         .block_size = 11,
@@ -145,21 +143,20 @@ static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][
         .application_authentication_code = {'2', '.', '0'}
     };
 
-    struct Netscape_Data_Subblock {
+    struct __attribute__((packed)) Netscape_Data_Subblock {
         // From https://en.wikipedia.org/wiki/GIF#Animated_GIF
         uint8_t  block_size;
         uint8_t  subblock_index;
         uint16_t number_of_repetitions;
         uint8_t  block_terminator;
-    } __attribute__((packed))
-    const netscape_subblock = {
+    } const netscape_subblock = {
         .block_size = 3,
         .subblock_index = 1,
         .number_of_repetitions = 0,
         .block_terminator = 0
     };
 
-    struct Graphics_Control_Extension {
+    struct __attribute__((packed)) Graphics_Control_Extension {
         // From https://www.w3.org/Graphics/GIF/spec-gif89a.txt
         char     extension_introducer;
         char     graphic_control_label;
@@ -171,8 +168,7 @@ static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][
         uint16_t delay;
         uint8_t  transparent_colour_index;
         uint8_t block_terminator;
-    } __attribute__((packed))
-    GCE = {
+    } GCE = {
         .extension_introducer = '!',
         .graphic_control_label = 0xF9,
         .block_size = 4,
@@ -186,7 +182,7 @@ static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][
         ._reserved = 0
     };
 
-    struct Image_Descriptor {
+    struct __attribute__((packed)) Image_Descriptor {
         // From https://www.w3.org/Graphics/GIF/spec-gif89a.txt
         char     image_separator;
         uint16_t left;
@@ -198,8 +194,7 @@ static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][
         unsigned _sort : 1;
         unsigned _interlace : 1;
         unsigned local_colour_table : 1;
-    } __attribute__((packed))
-    const image_descriptor = {
+    } const image_descriptor = {
         .image_separator = ',',
         .left = 0,
         .top = 0,
