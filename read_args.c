@@ -7,7 +7,7 @@ Params process_arguments(const int argc, char * const argv[]) {
         .ups = 100.0,
         .fps = 50.0,
         .ppm = 8.0,
-        .avg_speed = 2.0
+        .avg_speed = 20.0
     };
 
     struct option long_options[] = {
