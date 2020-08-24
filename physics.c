@@ -6,6 +6,29 @@ inline float gravity(const vec a, const vec b) {
     return G / dist_sq(b, a);
 }
 
+static inline void sort_by_Y(atom a[], const int n) {
+    for (int i = 1; i < n; ++i) {
+        if_unlikely (a[i].p.y < a[i-1].p.y) {
+            int j = i-2;
+            while ((j >= 0) && (a[j].p.y > a[i].p.y)) {
+                --j;
+            }
+
+            const atom temp = a[i];
+            
+            memmove(&a[j+2], &a[j+1], (i - (j+1)) * sizeof(*a));
+            a[j+1] = temp;
+        }
+    }
+
+    TEST(
+        for (int i = 1; i < n; ++i) {
+            assert(a[i-1].p.y <= a[i].p.y);
+            assert(memcmp(&a[i-1], &a[i], sizeof(a[i])) && "This is very likely an error");
+        }
+    )
+}
+
 inline void physics__random_populate(atom a[], const int n, const float box_radius, const float avg_speed) {
     assert(n >= 0);
     assert(box_radius > 0);
@@ -19,6 +42,8 @@ inline void physics__random_populate(atom a[], const int n, const float box_radi
         a[i].v.y = (2 * randf() - 1) * speed_range;
         a[i].r = 1;
     }
+
+    sort_by_Y(a, n);
 }
 
 inline void physics__update(atom a[], const int n, const float box_radius, const float ellapsed_time) {
@@ -127,4 +152,7 @@ inline void physics__update(atom a[], const int n, const float box_radius, const
         }
     }
     //*/
+
+    // Keep atoms sorted
+    sort_by_Y(a, n);
 }
