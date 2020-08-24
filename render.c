@@ -294,8 +294,8 @@ void render__animation(const int W, const int H, const int T, const uint8_t fram
     to_GIF(W, H, T, frame, FPS);
 }
 
-void test_BMP() {
-    const int N = 1 << 14;
+void render__test_BMP() {
+    const int N = 1 << 12;
     uint8_t (*canvas)[N] = malloc(N*N);
     if (!canvas) {
         perror("Error on frame creation");
