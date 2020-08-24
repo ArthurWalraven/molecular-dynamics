@@ -54,6 +54,12 @@ inline void physics__random_populate(atom a[], const int n, const float box_radi
     }
 
     sort_by_Y(a, n);
+
+    TEST(
+        for (int i = 0; i < n; ++i) {
+            assert(a[i].r > EPS);
+        }
+    )
 }
 
 inline void physics__update(atom a[], const int n, const float box_radius, const float ellapsed_time) {
