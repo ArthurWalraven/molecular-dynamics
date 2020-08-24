@@ -35,9 +35,7 @@
 #ifdef NDEBUG
 #define TEST(exp) (void) (0);
 #else
-#define TEST(exp) {\
-	BENCH("", exp)\
-}
+#define TEST(exp) {exp}
 #endif
 
 __always_inline

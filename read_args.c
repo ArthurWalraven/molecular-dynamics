@@ -77,8 +77,8 @@ Params process_arguments(const int argc, char * const argv[]) {
 
     parameters.frame_W = ceilf(parameters.box_radius * parameters.ppm);
     parameters.frame_H = ceilf(parameters.box_radius * parameters.ppm);
-    parameters.n_frames = ceilf(parameters.simulation_time * parameters.fps);
-    parameters.n_updates = floorf(parameters.simulation_time * parameters.ups);
+    parameters.n_frames = ceilf(parameters.simulation_time * parameters.fps);   // TODO: Make sure this is right
+    parameters.n_updates = floorf(parameters.simulation_time * parameters.ups); // TODO: Make sure this is right
 
     return parameters;
 }
