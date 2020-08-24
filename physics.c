@@ -8,9 +8,9 @@ inline float gravity(const vec a, const vec b) {
 
 static inline void sort_by_Y(atom a[], const int n) {
     for (int i = 1; i < n; ++i) {
-        if_unlikely (a[i].p.y < a[i-1].p.y) {
+        if_unlikely (a[i].p.y > a[i-1].p.y) {
             int j = i-2;
-            while ((j >= 0) && (a[j].p.y > a[i].p.y)) {
+            while ((j >= 0) && (a[j].p.y <= a[i].p.y)) {
                 --j;
             }
 
@@ -23,7 +23,7 @@ static inline void sort_by_Y(atom a[], const int n) {
 
     TEST(
         for (int i = 1; i < n; ++i) {
-            assert(a[i-1].p.y <= a[i].p.y);
+            assert(a[i-1].p.y >= a[i].p.y);
             assert(memcmp(&a[i-1], &a[i], sizeof(a[i])) && "This is very likely an error");
         }
     )
