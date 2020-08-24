@@ -16,5 +16,5 @@ typedef struct {
 } atom;
 
 
-void physics__random_populate(atom a[], const int n, const float box_radius);
+void physics__random_populate(atom a[], const int n, const float box_radius, const float avg_speed);
 void physics__update(atom atoms[], const int n, const float box_radius, const float ellapsed_time);
