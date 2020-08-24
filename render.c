@@ -99,8 +99,8 @@ static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][
     // https://en.wikipedia.org/wiki/File:Quilt_design_as_46x46_uncompressed_GIF.gif for an example
 
     // In order to keep one byte per pixel
-    const uint8_t BIT_DEPTH = 7;
-    const int NUMBER_OF_COLOURS = 1 << BIT_DEPTH;
+    static const uint8_t BIT_DEPTH = 7;
+    static const int NUMBER_OF_COLOURS = 1 << BIT_DEPTH;
     
     struct __attribute__((packed)) GIF_Header {
         // From https://www.w3.org/Graphics/GIF/spec-gif89a.txt
