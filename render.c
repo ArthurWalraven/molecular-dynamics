@@ -9,11 +9,6 @@ static inline float distance_to_ball(const vec v, const vec c, const float r) {
     return fminf(1, fmaxf(0, -2 * (dist(c, v) - r) + 1));
 }
 
-
-inline int render__meters_to_pixels(const float m, const int resolution) {
-    return ceilf(m * resolution);
-}
-
 static void to_BMP(const int W, const int H, const uint8_t canvas[][W]) {
     assert(!(W & 0b11) && "Not implemented: canvas width is not a multiple of 4");
 
@@ -262,6 +257,10 @@ static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][
     }
 }
 
+
+inline int render__meters_to_pixels(const float m, const int resolution) {
+    return ceilf(m * resolution);
+}
 
 void render__frame(const atom a[], const int n, const float max_r, const int W, const int H, uint8_t frame[][W], const float box_radius) {
     const vec canvas_origin = {
