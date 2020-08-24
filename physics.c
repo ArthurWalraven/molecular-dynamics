@@ -24,13 +24,14 @@ inline void physics__random_populate(atom a[], const int n, const float box_radi
 }
 
 inline void physics__update(atom a[], const int n, const float box_radius, const float ellapsed_time) {
-    // Update positions
+    //* Update positions
     for (int i = 0; i < n; ++i) {
         a[i].p.x += a[i].v.x * ellapsed_time;
         a[i].p.y += a[i].v.y * ellapsed_time;
         // a[i].v.x += a[i].a.x * ellapsed_time;
         // a[i].v.y += a[i].a.y * ellapsed_time;
     }
+    //*/
 
     /* Gravity
     for (int i = 0; i < n-1; ++i) {
