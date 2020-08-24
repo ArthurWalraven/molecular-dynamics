@@ -17,8 +17,6 @@ inline void physics__random_populate(atom a[], const int n, const float box_radi
         a[i].p.y = (2 * randf() - 1) * box_radius;
         a[i].v.x = (2 * randf() - 1) * speed_range;
         a[i].v.y = (2 * randf() - 1) * speed_range;
-        // a[i].a.x = 0;
-        // a[i].a.y = 0;
         a[i].r = 1;
     }
 }
@@ -28,8 +26,6 @@ inline void physics__update(atom a[], const int n, const float box_radius, const
     for (int i = 0; i < n; ++i) {
         a[i].p.x += a[i].v.x * ellapsed_time;
         a[i].p.y += a[i].v.y * ellapsed_time;
-        // a[i].v.x += a[i].a.x * ellapsed_time;
-        // a[i].v.y += a[i].a.y * ellapsed_time;
     }
     //*/
 

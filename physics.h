@@ -11,7 +11,6 @@
 typedef struct {
     vec p;
     vec v;
-    // vec a;
     float r;
 } atom;
 
