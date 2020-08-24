@@ -270,14 +270,24 @@ void render__frame(const atom a[], const int n, const int W, const int H, uint8_
     };
 
 
-    for (int k = 0; k < n; ++k) {
-        for (int i = 0; i < H; ++i) {
-            for (int j = 0; j < W; ++j) {
-                const vec v = {
-                    .x = (j - canvas_origin.x) * box_radius / (W / 2.f),
-                    .y = (i - canvas_origin.y) * box_radius / (W / 2.f)
-                };
+    int s = 0;
+    int t = 0;
+    for (int i = 0; i < H; ++i) {
+        vec v = {.y = -(i - canvas_origin.y) * box_radius / (W / 2.f)};
 
+        while ((s < n) && (a[s].p.y - 1.5f > v.y))
+        {
+            ++s;
+        }
+        while ((t < n) && (a[t].p.y + 1.5f > v.y))
+        {
+            ++t;
+        }
+
+        for (int j = 0; j < W; ++j) {
+            v.x = (j - canvas_origin.x) * box_radius / (W / 2.f);
+
+            for (int k = s; k < t; ++k) {
                 // No antialiasing
                 // frame[i][j] = (uint8_t) fminf(127, frame[i][j] + 127 * (dist_sq(v, a[k].p) <= a[k].r * a[k].r));
 
