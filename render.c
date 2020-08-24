@@ -275,11 +275,11 @@ void render__frame(const atom a[], const int n, const int W, const int H, uint8_
     for (int i = 0; i < H; ++i) {
         vec v = {.y = -(i - canvas_origin.y) * box_radius / (W / 2.f)};
 
-        while ((s < n) && (a[s].p.y - 1.5f > v.y))
+        while ((s < n) && (a[s].p.y - 1.5f > v.y))  // TODO: Make general
         {
             ++s;
         }
-        while ((t < n) && (a[t].p.y + 1.5f > v.y))
+        while ((t < n) && (a[t].p.y + 1.5f > v.y))  // TODO: Make general
         {
             ++t;
         }
