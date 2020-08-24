@@ -263,7 +263,7 @@ static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][
 }
 
 
-void render__frame(const atom a[], const int n, const int W, const int H, uint8_t frame[][W], const float box_radius) {
+void render__frame(const atom a[], const int n, const float max_r, const int W, const int H, uint8_t frame[][W], const float box_radius) {
     const vec canvas_origin = {
         .x = W / 2.f,
         .y = H / 2.f
@@ -275,11 +275,11 @@ void render__frame(const atom a[], const int n, const int W, const int H, uint8_
     for (int i = 0; i < H; ++i) {
         vec v = {.y = -(i - canvas_origin.y) * box_radius / (W / 2.f)};
 
-        while ((s < n) && (a[s].p.y - 1.5f > v.y))  // TODO: Make general
+        while ((s < n) && (a[s].p.y - (1.2f * max_r) > v.y))
         {
             ++s;
         }
-        while ((t < n) && (a[t].p.y + 1.5f > v.y))  // TODO: Make general
+        while ((t < n) && (a[t].p.y + (1.2f * max_r) > v.y))
         {
             ++t;
         }
