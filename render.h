@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <error.h>
+#include <endian.h>
 #include <assert.h>
 #include <math.h>
 

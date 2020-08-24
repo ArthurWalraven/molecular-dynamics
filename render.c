@@ -1,6 +1,12 @@
 #include "render.h"
 
 
+#if BYTE_ORDER == BIG_ENDIAN
+#define to_little_endian16(x)  __builtin_bswap16((uint16_t) (x))
+#else
+#define to_little_endian16(x) (x)
+#endif
+
 #define FRAMES_DIRECTORY_PATH "frames/"
 #define FRAME_FILE_NAME_PREFIX  FRAMES_DIRECTORY_PATH "frame_"
 
@@ -15,6 +21,7 @@ static void to_BMP(const int W, const int H, const uint8_t canvas[][W]) {
     static int frame_counter = -1;
     ++frame_counter;
 
+    // TODO: Make endian independent
     struct BMP_Header {
         // From https://en.wikipedia.org/wiki/BMP_file_format
         char BM[2];                 // Used to identify the BMP file
@@ -111,8 +118,8 @@ static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][
     } header = {
         .signature = {'G', 'I', 'F'},
         .version = {'8', '9', 'a'},
-        .width_px = W,
-        .height_px = H,
+        .width_px = to_little_endian16(W),
+        .height_px = to_little_endian16(H),
         .global_colour_table_size = BIT_DEPTH - 1,
         .colour_resolution = 8 - 1,
         .global_colour_table = true,
@@ -152,7 +159,7 @@ static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][
     } const netscape_subblock = {
         .block_size = 3,
         .subblock_index = 1,
-        .number_of_repetitions = 0,
+        .number_of_repetitions = to_little_endian16(0),
         .block_terminator = 0
     };
 
@@ -175,7 +182,7 @@ static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][
         .transparency = false,
         .wait_for_user_input = false,
         .diposal_method = 0,
-        .delay = (uint16_t) roundf(100.f / FPS),
+        .delay = to_little_endian16((uint16_t) roundf(100.f / FPS)),
         .transparent_colour_index = 0,
         .block_terminator = 0,
         // Unused fields
@@ -196,10 +203,10 @@ static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][
         unsigned local_colour_table : 1;
     } const image_descriptor = {
         .image_separator = ',',
-        .left = 0,
-        .top = 0,
-        .width = W,
-        .height = H,
+        .left = to_little_endian16(0),
+        .top = to_little_endian16(0),
+        .width = to_little_endian16(W),
+        .height = to_little_endian16(H),
         .local_colour_table = false,
         // Unused fields
         ._local_colour_table_size = 0,
