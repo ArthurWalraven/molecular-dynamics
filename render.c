@@ -279,7 +279,7 @@ void render__frame(const atom a[], const int n, const int W, const int H, uint8_
                 };
 
                 // No antialiasing
-                // frame[i][j] = (uint8_t) fminf(255, frame[i][j] + 255 * (dist_sq(v, a[k].p) <= a[k].r * a[k].r));
+                // frame[i][j] = (uint8_t) fminf(127, frame[i][j] + 127 * (dist_sq(v, a[k].p) <= a[k].r * a[k].r));
 
                 // Antialiased
                 frame[i][j] = (uint8_t) roundf(fminf(127.f, frame[i][j] + 127.f * distance_to_ball(v, a[k].p, a[k].r)));
