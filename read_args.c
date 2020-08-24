@@ -2,7 +2,8 @@
 
 Params process_arguments(const int argc, char * const argv[]) {
     Params parameters = {
-        .simulation_time = 1.0,
+        .n = 5,
+        .simulation_time = 5.0,
         .box_radius = 10.0,
         .ups = 100.0,
         .fps = 50.0,
