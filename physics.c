@@ -6,6 +6,16 @@ inline float gravity(const vec a, const vec b) {
     return G / dist_sq(b, a);
 }
 
+inline float physics__max_radius(const atom a[], const int n) {
+    float max_r = 0;
+
+    for (int i = 0; i < n; ++i) {
+        max_r = fmaxf(max_r, a[i].r);
+    }
+    
+    return max_r;
+}
+
 static inline void sort_by_Y(atom a[], const int n) {
     for (int i = 1; i < n; ++i) {
         if_unlikely (a[i].p.y > a[i-1].p.y) {

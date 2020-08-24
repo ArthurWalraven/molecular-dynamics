@@ -22,6 +22,7 @@ int main(const int argc, char * const argv[]) {
     BENCH("Simulation",
         atom a[params.n];
         physics__random_populate(a, params.n, params.box_radius, params.avg_speed);
+        const float max_r = physics__max_radius(a, params.n);
         
         int frame_counter = 0;
         float frame_time_tracker = 0;
