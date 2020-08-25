@@ -99,8 +99,9 @@ static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][
     // https://en.wikipedia.org/wiki/File:Quilt_design_as_46x46_uncompressed_GIF.gif for an example
 
     // In order to keep one byte per pixel
-    static const uint8_t BIT_DEPTH = 7;
-    static const int NUMBER_OF_COLOURS = 1 << BIT_DEPTH;
+    // NOTE: Used macros to keep GCC happy
+#define BIT_DEPTH   7
+#define NUMBER_OF_COLOURS   (1 << BIT_DEPTH)
     
     struct __attribute__((packed)) GIF_Header {
         // From https://www.w3.org/Graphics/GIF/spec-gif89a.txt
@@ -129,7 +130,7 @@ static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][
         ._aspect_ratio = 0
     };
     // Grayscale (128 colours)
-    for (size_t i = 0; i < NUMBER_OF_COLOURS; ++i) {
+    for (int i = 0; i < NUMBER_OF_COLOURS; ++i) {
         header.colour_table[i][0] = i * 2;
         header.colour_table[i][1] = i * 2;
         header.colour_table[i][2] = i * 2;
@@ -257,6 +258,9 @@ static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][
         perror("Error while closing file");
         exit(EXIT_FAILURE);
     }
+
+#undef NUMBER_OF_COLOURS
+#undef BIT_DEPTH
 }
 
 
