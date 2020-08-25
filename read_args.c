@@ -4,11 +4,11 @@ Params process_arguments(const int argc, char * const argv[]) {
     Params parameters = {
         .n = 5,
         .simulation_time = 5.0,
-        .box_radius = 10.0,
+        .box_radius = 10.0 * 1e3,
         .ups = 100.0,
         .fps = 50.0,
-        .ppm = 8.0,
-        .avg_speed = 20.0
+        .ppm = 8.0 * 1e3,
+        .avg_speed = 20.0 * 1e3
     };
 
     struct option long_options[] = {
@@ -39,10 +39,12 @@ Params process_arguments(const int argc, char * const argv[]) {
             
             case 'b':
                 items_read = sscanf(optarg, " %f", &parameters.box_radius);
+                parameters.box_radius *= 1e3;
                 break;
             
             case 's':
                 items_read = sscanf(optarg, " %f", &parameters.avg_speed);
+                parameters.avg_speed *= 1e3;
                 break;
             
             case 'u':
@@ -55,6 +57,7 @@ Params process_arguments(const int argc, char * const argv[]) {
             
             case 'r':
                 items_read = sscanf(optarg, " %f", &parameters.ppm);
+                parameters.ppm /= 1e3;
                 break;
             
             case '?':

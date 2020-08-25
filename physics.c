@@ -50,7 +50,7 @@ inline void physics__random_populate(atom a[], const int n, const float box_radi
         a[i].p.y = (2 * randf() - 1) * box_radius;
         a[i].v.x = (2 * randf() - 1) * speed_range;
         a[i].v.y = (2 * randf() - 1) * speed_range;
-        a[i].r = 1;
+        a[i].r = 1 * 1e3;
     }
     // TODO: Atoms could be inside one another
 

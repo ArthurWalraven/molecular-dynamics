@@ -1,7 +1,7 @@
 #include "render.h"
 
 
-#define ANTIALIASING_MARGIN 0.1f
+#define ANTIALIASING_MARGIN (0.1f * 1e3f)
 
 #define FRAMES_DIRECTORY_PATH "frames/"
 #define FRAME_FILE_NAME_PREFIX  FRAMES_DIRECTORY_PATH "frame_"
