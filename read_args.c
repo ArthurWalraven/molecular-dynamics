@@ -8,7 +8,7 @@ Params process_arguments(const int argc, char * const argv[]) {
         .ups = 100.0,
         .fps = 50.0,
         .resolution = 240,
-        .avg_speed = 20.0 * 1e3
+        .output_filename = "animation.gif"
     };
 
     struct option long_options[] = {
@@ -19,6 +19,7 @@ Params process_arguments(const int argc, char * const argv[]) {
         {"ups",         required_argument, NULL, 'u'},
         {"fps",         required_argument, NULL, 'f'},
         {"resolution",  required_argument, NULL, 'r'},
+        {"output-file", required_argument, NULL, 'o'},
         {0, 0, 0, 0}
     };
 
@@ -57,6 +58,11 @@ Params process_arguments(const int argc, char * const argv[]) {
             
             case 'r':
                 items_read = sscanf(optarg, " %d", &parameters.resolution);
+                break;
+            
+            case 'o':
+                parameters.output_filename = optarg;
+                items_read = 1;
                 break;
             
             case '?':

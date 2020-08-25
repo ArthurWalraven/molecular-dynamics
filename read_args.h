@@ -20,6 +20,7 @@ typedef struct
     float ups;              // Updates per second
     float fps;              // Frames per second
     int resolution;         // Pixels
+    const char * output_filename;
     
     int frame_W;    // In pixels
     int frame_H;    // In pixels

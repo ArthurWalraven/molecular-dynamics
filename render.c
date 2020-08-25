@@ -90,7 +90,7 @@ static void to_BMP(const int W, const int H, const uint8_t canvas[][W]) {
     fclose(fp);
 }
 
-static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][H][W], const float FPS) {
+static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][H][W], const float FPS, const char * filename) {
     assert(W > 0);
     assert(H > 0);
     assert(T > 0);
@@ -225,7 +225,7 @@ static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][
     const char GIF_file_terminator = ';';
 
 
-    FILE *fp = fopen("animation.gif", "wb");
+    FILE *fp = fopen(filename, "wb");
     if (!fp) {
         perror("Error on file creation");
         exit(EXIT_FAILURE);
@@ -304,10 +304,10 @@ void render__frame(const atom a[], const int n, const float max_r, const int W, 
     }
 }
 
-void render__animation(const int W, const int H, const int T, const uint8_t frame[][H][W], const float FPS) {
+void render__animation(const int W, const int H, const int T, const uint8_t frame[][H][W], const float FPS, const char * filename) {
     // system("convert -delay 2 " FRAME_FILE_NAME_PREFIX "*.bmp animation.gif");
 
-    to_GIF(W, H, T, frame, FPS);
+    to_GIF(W, H, T, frame, FPS, filename);
 }
 
 void render__test_BMP() {
