@@ -1,14 +1,15 @@
 #include "render.h"
 
 
+#define FRAMES_DIRECTORY_PATH "frames/"
+#define FRAME_FILE_NAME_PREFIX  FRAMES_DIRECTORY_PATH "frame_"
+
+
 #if BYTE_ORDER == BIG_ENDIAN
 #define to_little_endian16(x)  __builtin_bswap16((uint16_t) (x))
 #else
 #define to_little_endian16(x) (x)
 #endif
-
-#define FRAMES_DIRECTORY_PATH "frames/"
-#define FRAME_FILE_NAME_PREFIX  FRAMES_DIRECTORY_PATH "frame_"
 
 
 static inline float distance_to_ball(const vec v, const vec c, const float r) {
@@ -273,7 +274,6 @@ void render__frame(const atom a[], const int n, const float max_r, const int W, 
         .x = W / 2.f,
         .y = H / 2.f
     };
-
 
     int s = 0;
     int t = 0;
