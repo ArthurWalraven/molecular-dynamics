@@ -13,6 +13,7 @@ Params process_arguments(const int argc, char * const argv[]) {
     };
 
     struct option long_options[] = {
+        {"help",        no_argument,       NULL, 'h'},
         {"n",           required_argument, NULL, 'n'},
         {"time",        required_argument, NULL, 't'},
         {"box-radius",  required_argument, NULL, 'b'},
@@ -25,9 +26,9 @@ Params process_arguments(const int argc, char * const argv[]) {
     };
 
     int ch;
-    int opt_index;
-    while (-1 != (ch = getopt_long(argc, argv, "t:n:", long_options, &opt_index))) {
-        int items_read;
+    int opt_index = sizeof(long_options) / sizeof(*long_options);
+    while (-1 != (ch = getopt_long(argc, argv, "hn:t:o:", long_options, &opt_index))) {
+        int items_read = 1;
 
         switch (ch) {
             case 'n':
@@ -68,11 +69,45 @@ Params process_arguments(const int argc, char * const argv[]) {
             case '?':
             default:
                 items_read = 0;
+                // Roll over
+
+            case 'h':
+                fprintf(stderr,
+                    "USAGE: %s [options]\n\n"
+                    "OPTIONS:\n\n"
+                    "%-24s\t%s\n"
+                    "%-24s\t%s\n"
+                    "%-24s\t%s\n"
+                    "%-24s\t%s\n"
+                    "%-24s\t%s\n"
+                    "%-24s\t%s\n"
+                    "%-24s\t%s\n"
+                    "%-24s\t%s\n"
+                    "%-24s\t%s\n"
+                    ,
+                    argv[0]
+                    ,"-h, --help", "Show this message"
+                    ,"-o, --output-file=<filename>", "Output animation of the simulation to file <filename>"
+                    ,"-n, --n=<value>", "Simulate <value> atoms"
+                    ,"-t, --time=<value>", "Simulate <value> seconds"
+                    ,"--box-radius=<value>", "Run the simulation inside of a square box with radius of <value> meters"
+                    ,"--avg-speed=<value>", "Initilize atoms' velocity radomly with average magnitude of <value> m/s"
+                    ,"--resolution=<value>", "Generate frames with <value>x<value> pixels"
+                    ,"--fps=<value>", "Generate animation with (approximately) <value> frames per second"
+                    ,"--ups=<value>", "Run physics calculations <value> times per second"
+                );
+                if (ch == 'h') {
+                    exit(EXIT_SUCCESS);
+                }
                 break;
         }
 
         if (items_read != 1) {
-            fprintf(stderr, "Unrecognized argument '%s' for option '%s'.\n", optarg, long_options[opt_index].name);
+            fprintf(stderr,
+                "%s: Unrecognized argument '%s' for option '%s'.\n"
+                "Try '%s --help' for more information.\n",
+                argv[0], optarg, long_options[opt_index].name, argv[0]
+            );
             exit(EXIT_FAILURE);
         }
     }
