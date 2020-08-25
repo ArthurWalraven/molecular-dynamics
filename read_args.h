@@ -19,7 +19,7 @@ typedef struct
     float avg_speed;        // In m/s
     float ups;              // Updates per second
     float fps;              // Frames per second
-    float ppm;              // Pixels per meter
+    int resolution;         // Pixels
     
     int frame_W;    // In pixels
     int frame_H;    // In pixels

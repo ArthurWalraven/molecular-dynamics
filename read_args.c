@@ -7,7 +7,7 @@ Params process_arguments(const int argc, char * const argv[]) {
         .box_radius = 10.0 * 1e3,
         .ups = 100.0,
         .fps = 50.0,
-        .ppm = 8.0 * 1e3,
+        .resolution = 240,
         .avg_speed = 20.0 * 1e3
     };
 
@@ -56,8 +56,7 @@ Params process_arguments(const int argc, char * const argv[]) {
                 break;
             
             case 'r':
-                items_read = sscanf(optarg, " %f", &parameters.ppm);
-                parameters.ppm /= 1e3;
+                items_read = sscanf(optarg, " %d", &parameters.resolution);
                 break;
             
             case '?':
@@ -76,10 +75,10 @@ Params process_arguments(const int argc, char * const argv[]) {
     assert(parameters.box_radius > 0);
     assert(parameters.ups > 0);
     assert(parameters.fps > 0);
-    assert(parameters.ppm > 0);
+    assert(parameters.resolution > 0);
 
-    parameters.frame_W = ceilf(parameters.box_radius * parameters.ppm);
-    parameters.frame_H = ceilf(parameters.box_radius * parameters.ppm);
+    parameters.frame_W = parameters.resolution;
+    parameters.frame_H = parameters.resolution;
     parameters.n_frames = ceilf(parameters.simulation_time * parameters.fps);   // TODO: Make sure this is right
     parameters.n_updates = floorf(parameters.simulation_time * parameters.ups); // TODO: Make sure this is right
 

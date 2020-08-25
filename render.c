@@ -269,10 +269,6 @@ static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][
 }
 
 
-inline int render__meters_to_pixels(const float m, const int resolution) {
-    return ceilf(m * resolution);
-}
-
 void render__frame(const atom a[], const int n, const float max_r, const int W, const int H, uint8_t frame[][W], const float box_radius) {
     const vec canvas_origin = {
         .x = W / 2.f,
