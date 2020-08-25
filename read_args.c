@@ -13,6 +13,7 @@ Params process_arguments(const int argc, char * const argv[]) {
     };
 
     struct option long_options[] = {
+        // TODO: Add '--version'
         {"help",        no_argument,       NULL, 'h'},
         {"n",           required_argument, NULL, 'n'},
         {"time",        required_argument, NULL, 't'},
