@@ -43,7 +43,7 @@ inline void physics__random_populate(atom a[], const int n, const float box_radi
     assert(n >= 0);
     assert(box_radius > 0);
 
-    const float speed_range = avg_speed * sqrtf(2);
+    const float speed_range = 2 * avg_speed / sqrtf(2);
 
     for (int i = 0; i < n; ++i) {
         a[i].p.x = (2 * randf() - 1) * box_radius;
