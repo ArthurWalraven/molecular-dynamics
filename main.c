@@ -47,9 +47,9 @@ int main(const int argc, char * const argv[]) {
     )
     //*/
 
-    BENCH("Animation",
+    // BENCH("Animation",
         render__animation(params.frame_W, params.frame_H, params.n_frames, frames, params.fps, params.output_filename);
-    )
+    // )
 
 
     free(frames);
