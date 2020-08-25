@@ -1,6 +1,8 @@
 #include "render.h"
 
 
+#define ANTIALIASING_MARGIN 0.1f
+
 #define FRAMES_DIRECTORY_PATH "frames/"
 #define FRAME_FILE_NAME_PREFIX  FRAMES_DIRECTORY_PATH "frame_"
 
@@ -13,7 +15,9 @@
 
 
 static inline float distance_to_ball(const vec v, const vec c, const float r) {
-    return fminf(1, fmaxf(0, -2 * (dist(c, v) - r) + 1));
+    return fminf(1, fmaxf(0,
+            (-dist_sq(c, v) + sq(r))/(sq(ANTIALIASING_MARGIN) + 2*r*ANTIALIASING_MARGIN) + 1
+        ));
 }
 
 static void to_BMP(const int W, const int H, const uint8_t canvas[][W]) {
@@ -295,7 +299,7 @@ void render__frame(const atom a[], const int n, const float max_r, const int W, 
 
             for (int k = s; k < t; ++k) {
 #ifdef NO_ANTIALIASING
-                frame[i][j] = (uint8_t) fminf(127, frame[i][j] + 127 * (dist_sq(v, a[k].p) <= a[k].r * a[k].r));
+                frame[i][j] = (uint8_t) fminf(127, frame[i][j] + 127 * (dist_sq(v, a[k].p) <= sq(a[k].r)));
 #else
                 frame[i][j] = (uint8_t) roundf(fminf(127.f, frame[i][j] + 127.f * distance_to_ball(v, a[k].p, a[k].r)));
 #endif
