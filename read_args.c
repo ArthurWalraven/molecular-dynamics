@@ -2,12 +2,12 @@
 
 Params process_arguments(const int argc, char * const argv[]) {
     Params parameters = {
-        .n = 5,
+        .n = 10,
         .simulation_time = 5.0,
         .box_radius = 10.0 * 1e3,
         .ups = 1000.0,
         .fps = 50.0,
-        .resolution = 240,
+        .resolution = 100,
         .avg_speed = 20.0 * 1e3,
         .output_filename = "animation.gif"
     };
@@ -87,14 +87,14 @@ Params process_arguments(const int argc, char * const argv[]) {
                     ,
                     argv[0]
                     ,"-h, --help", "Show this message"
-                    ,"-o, --output-file=<filename>", "Output animation of the simulation to file <filename>"
-                    ,"-n, --n=<value>", "Simulate <value> atoms"
-                    ,"-t, --time=<value>", "Simulate <value> seconds"
-                    ,"--box-radius=<value>", "Run the simulation inside of a square box with radius of <value> meters"
-                    ,"--avg-speed=<value>", "Initilize atoms' velocity radomly with average magnitude of <value> m/s"
-                    ,"--resolution=<value>", "Generate frames with <value>x<value> pixels"
-                    ,"--fps=<value>", "Generate animation with (approximately) <value> frames per second"
-                    ,"--ups=<value>", "Run physics calculations <value> times per second"
+                    ,"-o, --output-file=<filename>", "Output animation of the simulation to file <filename>" "(default: 'animation.gif')"
+                    ,"-n, --n=<value>", "Simulate <value> atoms" "(default: 10)"
+                    ,"-t, --time=<value>", "Simulate <value> seconds" "(default: 5.0)"
+                    ,"--box-radius=<value>", "Run the simulation inside of a square box with radius of <value> meters" "(default: 10.0)"
+                    ,"--avg-speed=<value>", "Initilize atoms' velocity radomly with average magnitude of <value> m/s" "(default: 20.0)"
+                    ,"--resolution=<value>", "Generate frames with <value>x<value> pixels" "(default: 100)"
+                    ,"--fps=<value>", "Generate animation with (approximately) <value> frames per second" "(default: 50.0)"
+                    ,"--ups=<value>", "Run physics calculations <value> times per second" " (default: 1000.0)"
                 );
                 if (ch == 'h') {
                     exit(EXIT_SUCCESS);
