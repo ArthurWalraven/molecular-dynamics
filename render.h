@@ -10,6 +10,7 @@
 #include <endian.h>
 #include <assert.h>
 #include <math.h>
+#include <omp.h>
 
 #include "global.h"
 #include "physics.h"

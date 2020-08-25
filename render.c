@@ -273,6 +273,7 @@ void render__frame(const atom a[], const int n, const float max_r, const int W, 
 
     int s = 0;
     int t = 0;
+    #pragma omp parallel for firstprivate(s, t) schedule(static)
     for (int i = 0; i < H; ++i) {
         vec v = {.y = -(i - canvas_origin.y) * box_radius / (W / 2.f)};
 
