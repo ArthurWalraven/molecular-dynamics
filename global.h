@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <sys/time.h>
+#include <time.h>
 #include <sys/resource.h>
 
 
@@ -20,16 +20,24 @@
 
 #define BENCH(str, exp)	{\
 	puts(!(str[0]) ? "\nStart" : "\nStart: " str);\
-	struct rusage resource_usage;\
-	getrusage(RUSAGE_SELF, &resource_usage);\
-	const struct timeval usertime_start = resource_usage.ru_utime;\
+\
+	struct timespec cpu_time_start;\
+	struct timespec real_time_start;\
+	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &cpu_time_start);\
+	clock_gettime(CLOCK_REALTIME, &real_time_start);\
 \
 	{exp}\
 \
-	getrusage(RUSAGE_SELF, &resource_usage);\
-	const struct timeval usertime_end = resource_usage.ru_utime;\
+	struct timespec cpu_time_end;\
+	struct timespec real_time_end;\
+	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &cpu_time_end);\
+	clock_gettime(CLOCK_REALTIME, &real_time_end);\
 \
-	printf("End: " str " (Ellapsed time: %.4fs)\n", (usertime_end.tv_sec - usertime_start.tv_sec) + (usertime_end.tv_usec - usertime_start.tv_usec)/1e6f);\
+	printf("End: " str "\t(Ellapsed time: CPU %.4fs\tReal %.4fs)\n",\
+		(cpu_time_end.tv_sec - cpu_time_start.tv_sec)\
+		+ (cpu_time_end.tv_nsec - cpu_time_start.tv_nsec)/1e9,\
+		(real_time_end.tv_sec - real_time_start.tv_sec)\
+		+ (real_time_end.tv_nsec - real_time_start.tv_nsec)/1e9);\
 }
 
 #ifdef NDEBUG
