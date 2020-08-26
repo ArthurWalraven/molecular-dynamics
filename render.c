@@ -294,7 +294,7 @@ void render__frame(const atom a[], const int n, const float max_r, const int W, 
             v.x = (j - canvas_origin.x) * box_radius / (W / 2.f);
 
             for (int k = s; k < t; ++k) {
-#ifdef NO_ANTIALIASING
+#ifdef NANTIALIAS
                 frame[i][j] = (uint8_t) fminf(127, frame[i][j] + 127 * (dist_sq(v, a[k].p) <= sq(a[k].r)));
 #else
                 frame[i][j] = (uint8_t) roundf(fminf(127.f, frame[i][j] + 127.f * distance_to_ball(v, a[k].p, a[k].r)));
