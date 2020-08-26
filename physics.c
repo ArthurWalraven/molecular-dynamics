@@ -39,6 +39,40 @@ static inline void sort_by_Y(atom a[], const int n) {
     )
 }
 
+__always_inline
+static void adjust_for_collision(atom * a, atom * b) {
+    const vec p = sub(b->p, a->p);
+
+    const vec v = sub(a->v, b->v);
+    const float v_len = norm(v);
+    const vec v_n = divide(v, v_len);
+
+    const vec pPv = mul(v_n, dot(p, v_n));
+
+    const float h_sq = norm_sq(p) - norm_sq(pPv);
+    const float l = sqrtf(sq(a->r + b->r) - h_sq);
+
+    const float time_since_collision = (l - norm(pPv)) / v_len;
+
+    a->p.x -= a->v.x * time_since_collision;
+    a->p.y -= a->v.y * time_since_collision;
+    b->p.x -= b->v.x * time_since_collision;
+    b->p.y -= b->v.y * time_since_collision;
+
+    // const vec q_n = divide(sub(b->p, a->p), norm(sub(b->p, a->p)));
+    const vec q_n = normalize(sub(b->p, a->p));   // Faster
+
+    const vec proj_A = mul(q_n, dot(sub(a->v, b->v), q_n));
+    const vec proj_B = mul(q_n, dot(sub(b->v, a->v), q_n));
+    a->v = sub(a->v, proj_A);
+    b->v = sub(b->v, proj_B);
+
+    a->p.x += a->v.x * time_since_collision;
+    a->p.y += a->v.y * time_since_collision;
+    b->p.x += b->v.x * time_since_collision;
+    b->p.y += b->v.y * time_since_collision;
+}
+
 inline void physics__random_populate(atom a[], const int n, const float box_radius, const float avg_speed) {
     assert(n >= 0);
     assert(box_radius > 0);
@@ -88,37 +122,7 @@ inline void physics__update(atom a[], const int n, const float box_radius, const
                     .r = a[j].r * scale_factor
                 };
 
-                const vec p = sub(B.p, A.p);
-
-                const vec v = sub(A.v, B.v);
-                const float v_len = norm(v);
-                const vec v_n = divide(v, v_len);
-
-                const vec pPv = mul(v_n, dot(p, v_n));
-
-                const float h_sq = norm_sq(p) - norm_sq(pPv);
-                const float l = sqrtf(sq(A.r + B.r) - h_sq);
-
-                const float time_since_collision = (l - norm(pPv)) / v_len;
-
-                A.p.x -= A.v.x * time_since_collision;
-                A.p.y -= A.v.y * time_since_collision;
-                B.p.x -= B.v.x * time_since_collision;
-                B.p.y -= B.v.y * time_since_collision;
-
-                // const vec q_n = divide(sub(B.p, A.p), norm(sub(B.p, A.p)));
-                const vec q_n = normalize(sub(B.p, A.p));   // Faster
-
-                const vec proj_A = mul(q_n, dot(sub(A.v, B.v), q_n));
-                const vec proj_B = mul(q_n, dot(sub(B.v, A.v), q_n));
-                A.v = sub(A.v, proj_A);
-                B.v = sub(B.v, proj_B);
-
-                A.p.x += A.v.x * time_since_collision;
-                A.p.y += A.v.y * time_since_collision;
-                B.p.x += B.v.x * time_since_collision;
-                B.p.y += B.v.y * time_since_collision;
-
+                adjust_for_collision(&A, &B);
 
                 const float reciprocal_scale_factor = 1.0 / scale_factor;
 
