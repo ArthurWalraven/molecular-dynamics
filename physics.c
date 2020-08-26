@@ -160,4 +160,15 @@ inline void physics__update(atom a[], const int n, const float box_radius, const
 
     // Keep atoms sorted
     sort_by_Y(a, n);
+
+    
+    TEST(
+        for (int i = 0; i < n-1; ++i) {
+            int collision_counter = 0;
+            for (int j = i+1; j < n; ++j) {
+                collision_counter += (dist_sq(a[i].p, a[j].p) < sq(a[i].r + a[j].r));
+            }
+            assert(collision_counter <= 1);
+        }
+    )
 }
