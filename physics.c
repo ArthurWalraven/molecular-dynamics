@@ -71,18 +71,6 @@ inline void physics__update(atom a[], const int n, const float box_radius, const
     }
     //*/
 
-    /* Gravity
-    for (int i = 0; i < n-1; ++i) {
-        for (int j = i+1; j < n; ++j) {
-            const float g = gravity(a[i].p, a[j].p);
-            const vec pn = normalize(sub(a[j].p, a[i].p));
-
-            a[i].a = add(a[i].a, mul(pn, -g));
-            a[j].a = add(a[j].a, mul(pn, g));
-        }
-    }
-    //*/
-
     //* Atom-atom collision
     for (int i = 0; i < n-1; ++i) {
         for (int j = i+1; j < n; ++j) {
