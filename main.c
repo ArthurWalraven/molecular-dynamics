@@ -6,11 +6,15 @@
 #include "physics.h"
 #include "render.h"
 
+#ifndef NRENDER
+#define DORENDER
+#endif
+
 
 int main(const int argc, char * const argv[]) {
     const Params params = process_arguments(argc, argv);
 
-#ifndef NRENDER
+#ifdef DORENDER
     printf("Allocating animation buffer: [%d] %dx%d GIF (pixel stream of %.2f MiB)\n", params.n_frames, params.frame_W, params.frame_H, (params.n_frames * params.frame_H * params.frame_W) / 0x1p20f);
     uint8_t (*frames)[params.frame_H][params.frame_W] = calloc(params.n_frames * params.frame_H * params.frame_W, sizeof(frames[0][0][0]));
     if (!frames) {
@@ -36,7 +40,7 @@ int main(const int argc, char * const argv[]) {
 
             physics__update(a, params.n, params.box_radius, update_time_step);
 
-#ifndef NRENDER
+#ifdef DORENDER
             if (((t+1) * update_time_step) - frame_time_tracker >= frame_time_step) {
 
                 render__frame(a, params. n, max_r, params.frame_W, params.frame_H, frames[frame_counter], params.box_radius);
@@ -50,14 +54,14 @@ int main(const int argc, char * const argv[]) {
     )
     //*/
 
-#ifndef NRENDER
+#ifdef DORENDER
     // BENCH("Animation",
         render__animation(params.frame_W, params.frame_H, params.n_frames, frames, params.fps, params.output_filename);
     // )
 #endif
 
 
-#ifndef NRENDER
+#ifdef DORENDER
     free(frames);
 #endif
     putchar('\n');
