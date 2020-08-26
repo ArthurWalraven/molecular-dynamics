@@ -165,7 +165,7 @@ inline void physics__update(atom a[], const int n, const float box_radius, const
     // Keep atoms sorted
     sort_by_Y(a, n);
 
-    
+    /* Test for multiple collision
     TEST(
         for (int i = 0; i < n-1; ++i) {
             int collision_counter = 0;
@@ -175,4 +175,5 @@ inline void physics__update(atom a[], const int n, const float box_radius, const
             assert(collision_counter <= 1);
         }
     )
+    //*/
 }
