@@ -81,8 +81,6 @@ float dist(const vec a, const vec b) {
 
 __always_inline
 vec normalize(const vec a) {
-    assert(norm_sq(a) > EPS && "Null vector cannot be normalized");
-
     __m128 t = _mm_set_ss(norm_sq(a));
     t = _mm_rsqrt_ss(t);
     return mul(a, _mm_cvtss_f32(t));
