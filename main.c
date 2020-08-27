@@ -43,7 +43,7 @@ int main(const int argc, char * const argv[]) {
 #ifdef DORENDER
             if (((t+1) * update_time_step) - frame_time_tracker >= frame_time_step) {
 
-                render__frame(b, params. n, max_r, params.frame_W, params.frame_H, frames[frame_counter], params.box_radius);
+                render__frame(b, params.n, max_r, params.frame_W, params.frame_H, frames[frame_counter], params.box_radius);
 
                 frame_time_tracker += frame_time_step;
                 ++frame_counter;
