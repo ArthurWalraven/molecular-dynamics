@@ -25,9 +25,9 @@ int main(const int argc, char * const argv[]) {
 
     //* Simulation
     BENCH("Simulation",
-        atom a[params.n];
-        physics__random_populate(a, params.n, params.box_radius, params.avg_speed);
-        const float max_r = physics__max_radius(a, params.n);
+        ball b[params.n];
+        physics__random_populate(b, params.n, params.box_radius, params.avg_speed);
+        const float max_r = physics__max_radius(b, params.n);
         
         int frame_counter = 0;
         float frame_time_tracker = 0;
@@ -38,12 +38,12 @@ int main(const int argc, char * const argv[]) {
             const float update_time_step = params.simulation_time / params.n_updates;
             const float frame_time_step = params.simulation_time / params.n_frames;
 
-            physics__update(a, params.n, params.box_radius, update_time_step);
+            physics__update(b, params.n, params.box_radius, update_time_step);
 
 #ifdef DORENDER
             if (((t+1) * update_time_step) - frame_time_tracker >= frame_time_step) {
 
-                render__frame(a, params. n, max_r, params.frame_W, params.frame_H, frames[frame_counter], params.box_radius);
+                render__frame(b, params. n, max_r, params.frame_W, params.frame_H, frames[frame_counter], params.box_radius);
 
                 frame_time_tracker += frame_time_step;
                 ++frame_counter;
