@@ -103,6 +103,21 @@ Params process_arguments(const int argc, char * const argv[]) {
                 break;
         }
 
+        if (
+               parameters.simulation_time <= 0
+            || parameters.box_radius <= 0
+            || parameters.ups <= 0
+            || parameters.fps <= 0
+            || parameters.resolution <= 0
+        ) {
+            fprintf(stderr,
+                "%s: Option '%s' takes a positive value. Bad argument: '%s'.\n"
+                "Try '%s --help' for more information.\n",
+                argv[0], long_options[opt_index].name, optarg, argv[0]
+            );
+            exit(EXIT_FAILURE);
+        }
+
         if (items_read != 1) {
             fprintf(stderr,
                 "%s: Unrecognized argument '%s' for option '%s'.\n"
@@ -112,12 +127,6 @@ Params process_arguments(const int argc, char * const argv[]) {
             exit(EXIT_FAILURE);
         }
     }
-
-    assert(parameters.simulation_time > 0);
-    assert(parameters.box_radius > 0);
-    assert(parameters.ups > 0);
-    assert(parameters.fps > 0);
-    assert(parameters.resolution > 0);
 
     parameters.frame_W = parameters.resolution;
     parameters.frame_H = parameters.resolution;
