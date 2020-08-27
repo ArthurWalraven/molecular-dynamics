@@ -8,9 +8,9 @@
 
 
 #if BYTE_ORDER == BIG_ENDIAN
-#define to_little_endian16(x)  __builtin_bswap16((uint16_t) (x))
+#define to_little_endian16(x)   __builtin_bswap16((uint16_t) (x))
 #else
-#define to_little_endian16(x) (x)
+#define to_little_endian16(x)   (x)
 #endif
 
 
@@ -310,7 +310,7 @@ void render__animation(const int W, const int H, const int T, const uint8_t fram
     to_GIF(W, H, T, frame, FPS, filename);
 }
 
-void render__test_BMP() {
+inline void render__test_BMP() {
     const int N = 1 << 11;
     uint8_t (*canvas)[N] = malloc(N*N);
     if (!canvas) {
