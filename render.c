@@ -1,7 +1,7 @@
 #include "render.h"
 
 
-#define ANTIALIASING_MARGIN (0.1f * 1e3f)
+#define ANTIALIASING_MARGIN 0.1f
 
 #define FRAMES_DIRECTORY_PATH "frames/"
 #define FRAME_FILE_NAME_PREFIX  FRAMES_DIRECTORY_PATH "frame_"
@@ -269,7 +269,7 @@ static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][
 }
 
 
-void render__frame(const atom a[], const int n, const float max_r, const int W, const int H, uint8_t frame[][W], const float box_radius) {
+void render__frame(const atom a[], const int n, const int W, const int H, uint8_t frame[][W], const float box_radius) {
     const vec canvas_origin = {
         .x = W / 2.f,
         .y = H / 2.f
@@ -281,11 +281,11 @@ void render__frame(const atom a[], const int n, const float max_r, const int W, 
     for (int i = 0; i < H; ++i) {
         vec v = {.y = -(i - canvas_origin.y) * box_radius / (W / 2.f)};
 
-        while ((s < n) && (a[s].p.y - (1.2f * max_r) > v.y))
+        while ((s < n) && (a[s].r.y - 1.2f > v.y))
         {
             ++s;
         }
-        while ((t < n) && (a[t].p.y + (1.2f * max_r) > v.y))
+        while ((t < n) && (a[t].r.y + 1.2f > v.y))
         {
             ++t;
         }
@@ -295,9 +295,9 @@ void render__frame(const atom a[], const int n, const float max_r, const int W, 
 
             for (int k = s; k < t; ++k) {
 #ifdef NANTIALIAS
-                frame[i][j] = (uint8_t) fminf(127, frame[i][j] + 127 * (dist_sq(v, a[k].p) <= sq(a[k].r)));
+                frame[i][j] = (uint8_t) fminf(127, frame[i][j] + 127 * (dist_sq(v, a[k].r) <= 1));
 #else
-                frame[i][j] = (uint8_t) roundf(fminf(127.f, frame[i][j] + 127.f * distance_to_ball(v, a[k].p, a[k].r)));
+                frame[i][j] = (uint8_t) roundf(fminf(127.f, frame[i][j] + 127.f * distance_to_ball(v, a[k].r, 1)));
 #endif
             }
         }

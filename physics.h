@@ -10,12 +10,11 @@
 
 
 typedef struct {
-    vec p;
+    vec r;
     vec v;
-    float r;
+    vec a;
 } atom;
 
 
-void physics__random_populate(atom a[], const int n, const float box_radius, const float avg_speed);
-float physics__max_radius(const atom a[], const int n);
-void physics__update(atom a[], const int n, const float box_radius, const float ellapsed_time);
+void physics__lattice_populate(atom a[], const int n, const float box_radius);
+void physics__update(atom a[], const int n, const float ellapsed_time, const float box_radius);
