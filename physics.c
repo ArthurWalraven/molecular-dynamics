@@ -32,7 +32,7 @@ inline void physics__lattice_populate(atom a[], const int n, const float box_rad
     }
 }
 
-static inline void sort_by_Y(atom a[], const int n) {
+inline void physics__sort_by_Y(atom a[], const int n) {
     for (int i = 1; i < n; ++i) {
         if_unlikely (a[i].r.y > a[i-1].r.y) {
             int j = i-2;
@@ -117,7 +117,4 @@ inline void physics__update(atom a[], const int n, const float ellapsed_time, co
             }
         }
     }
-
-    // Keep atoms sorted
-    sort_by_Y(a, n);
 }

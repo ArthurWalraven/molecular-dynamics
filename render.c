@@ -1,7 +1,7 @@
 #include "render.h"
 
 
-#define ANTIALIASING_MARGIN 0.1f
+#define WITCH_CONSTANT 6.f
 
 #define FRAMES_DIRECTORY_PATH "frames/"
 #define FRAME_FILE_NAME_PREFIX  FRAMES_DIRECTORY_PATH "frame_"
@@ -14,10 +14,8 @@
 #endif
 
 
-static inline float distance_to_ball(const vec v, const vec c, const float r) {
-    return fminf(1, fmaxf(0,
-            (-dist_sq(c, v) + sq(r))/(sq(ANTIALIASING_MARGIN) + 2*r*ANTIALIASING_MARGIN) + 1
-        ));
+static inline float witch_of_Agnesi(const vec v, const vec c) {
+    return 1/(1 + sq(WITCH_CONSTANT) * dist_sq(v, c));
 }
 
 static void to_BMP(const int W, const int H, const uint8_t canvas[][W]) {
@@ -269,7 +267,9 @@ static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][
 }
 
 
-void render__frame(const atom a[], const int n, const int W, const int H, uint8_t frame[][W], const float box_radius) {
+void render__frame(atom a[], const int n, const int W, const int H, uint8_t frame[][W], const float box_radius) {
+    physics__sort_by_Y(a, n);
+
     const vec canvas_origin = {
         .x = W / 2.f,
         .y = H / 2.f
@@ -281,11 +281,12 @@ void render__frame(const atom a[], const int n, const int W, const int H, uint8_
     for (int i = 0; i < H; ++i) {
         vec v = {.y = -(i - canvas_origin.y) * box_radius / (W / 2.f)};
 
-        while ((s < n) && (a[s].r.y - 1.2f > v.y))
+        const float rendering_radius = 15.93738f / WITCH_CONSTANT;
+        while ((s < n) && (a[s].r.y - rendering_radius > v.y))
         {
             ++s;
         }
-        while ((t < n) && (a[t].r.y + 1.2f > v.y))
+        while ((t < n) && (a[t].r.y + rendering_radius > v.y))
         {
             ++t;
         }
@@ -297,7 +298,7 @@ void render__frame(const atom a[], const int n, const int W, const int H, uint8_
 #ifdef NANTIALIAS
                 frame[i][j] = (uint8_t) fminf(127, frame[i][j] + 127 * (dist_sq(v, a[k].r) <= 1));
 #else
-                frame[i][j] = (uint8_t) roundf(fminf(127.f, frame[i][j] + 127.f * distance_to_ball(v, a[k].r, 1)));
+                frame[i][j] = (uint8_t) roundf(fminf(127.f, frame[i][j] + 127.f * witch_of_Agnesi(v, a[k].r)));
 #endif
             }
         }
