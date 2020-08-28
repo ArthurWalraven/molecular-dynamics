@@ -53,7 +53,7 @@ inline void physics__sort_by_Y(atom a[], const int n) {
     )
 }
 
-inline vec physics__periodic_shift(vec v, const float box_radius) {
+inline vec physics__periodic_boundary_shift(vec v, const float box_radius) {
     if_unlikely(norm_max(v) > box_radius) {
         if_unlikely(v.x > box_radius) {
             v.x -= 2 * box_radius;
@@ -87,7 +87,7 @@ inline void physics__update(atom a[], const int n, const float dt, const float b
     for (int i = 0; i < n-1; ++i) {
         for (int j = i+1; j < n; ++j) {
             vec dr = sub(a[j].r, a[i].r);
-            dr = physics__periodic_shift(dr, box_radius);
+            dr = physics__periodic_boundary_shift(dr, box_radius);
 
             const float recip_drdr = 1/dot(dr, dr);
             const vec acc = mul(dr, -24 * recip_drdr * ( 2 * powf(recip_drdr, 6) - powf(recip_drdr, 3)));
@@ -103,6 +103,6 @@ inline void physics__update(atom a[], const int n, const float dt, const float b
     }
 
     for (int i = 0; i < n; ++i) {
-        a[i].r = physics__periodic_shift(a[i].r, box_radius);
+        a[i].r = physics__periodic_boundary_shift(a[i].r, box_radius);
     }
 }

@@ -14,7 +14,7 @@
 #endif
 
 
-// From https://en.wikipedia.org/wiki/Witch_of_Agnesi
+// See https://en.wikipedia.org/wiki/Witch_of_Agnesi
 static inline float witch_of_Agnesi(const vec v) {
     return 1/(1 + sq(WITCH_CONSTANT) * norm_sq(v));
 }
@@ -299,7 +299,7 @@ void render__frame(atom a[], const int n, const int W, const int H, uint8_t fram
 
             for (int k = s; k < t; ++k) {
                 vec r = sub(v, a[k].r);
-                r = physics__periodic_shift(r, box_radius);
+                r = physics__periodic_boundary_shift(r, box_radius);
 
                 colour_pixel(&frame[i][j], r);
             }
@@ -311,7 +311,7 @@ void render__frame(atom a[], const int n, const int W, const int H, uint8_t fram
                     }
 
                     vec r = sub(v, (vec) {a[k].r.x, a[k].r.y + 2 * box_radius});
-                    r = physics__periodic_shift(r, box_radius);
+                    r = physics__periodic_boundary_shift(r, box_radius);
 
                     colour_pixel(&frame[i][j], r);
                 }
@@ -323,7 +323,7 @@ void render__frame(atom a[], const int n, const int W, const int H, uint8_t fram
                     }
 
                     vec r = sub(v, (vec) {a[k].r.x, a[k].r.y - 2 * box_radius});
-                    r = physics__periodic_shift(r, box_radius);
+                    r = physics__periodic_boundary_shift(r, box_radius);
 
                     colour_pixel(&frame[i][j], r);
                 }
