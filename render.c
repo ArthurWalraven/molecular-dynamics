@@ -19,6 +19,10 @@ static inline float witch_of_Agnesi(const vec v) {
     return 1/(1 + sq(WITCH_CONSTANT) * norm_sq(v));
 }
 
+static inline void colour_pixel(uint8_t * restrict p, const vec r) {
+    *p = (uint8_t) roundf(fminf(127.f, *p + 127.f * witch_of_Agnesi(r)));
+}
+
 static void to_BMP(const int W, const int H, const uint8_t canvas[][W]) {
     assert(!(W & 0b11) && "Not implemented: canvas width is not a multiple of 4");
 
@@ -297,7 +301,7 @@ void render__frame(atom a[], const int n, const int W, const int H, uint8_t fram
                 vec r = sub(v, a[k].r);
                 r = physics__periodic_shift(r, box_radius);
 
-                frame[i][j] = (uint8_t) roundf(fminf(127.f, frame[i][j] + 127.f * witch_of_Agnesi(r)));
+                colour_pixel(&frame[i][j], r);
             }
 
             if_unlikely (v.y > box_radius - rendering_radius) {
@@ -309,7 +313,7 @@ void render__frame(atom a[], const int n, const int W, const int H, uint8_t fram
                     vec r = sub(v, (vec) {a[k].r.x, a[k].r.y + 2 * box_radius});
                     r = physics__periodic_shift(r, box_radius);
 
-                    frame[i][j] = (uint8_t) roundf(fminf(127.f, frame[i][j] + 127.f * witch_of_Agnesi(r)));
+                    colour_pixel(&frame[i][j], r);
                 }
             }
             else if_unlikely (v.y < -box_radius + rendering_radius) {
@@ -321,7 +325,7 @@ void render__frame(atom a[], const int n, const int W, const int H, uint8_t fram
                     vec r = sub(v, (vec) {a[k].r.x, a[k].r.y - 2 * box_radius});
                     r = physics__periodic_shift(r, box_radius);
 
-                    frame[i][j] = (uint8_t) roundf(fminf(127.f, frame[i][j] + 127.f * witch_of_Agnesi(r)));
+                    colour_pixel(&frame[i][j], r);
                 }
             }
         }
