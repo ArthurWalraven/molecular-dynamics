@@ -15,8 +15,8 @@
 
 
 // From https://en.wikipedia.org/wiki/Witch_of_Agnesi
-static inline float witch_of_Agnesi(const vec v, const vec c) {
-    return 1/(1 + sq(WITCH_CONSTANT) * dist_sq(v, c));
+static inline float witch_of_Agnesi(const vec v) {
+    return 1/(1 + sq(WITCH_CONSTANT) * norm_sq(v));
 }
 
 static void to_BMP(const int W, const int H, const uint8_t canvas[][W]) {
@@ -294,6 +294,10 @@ void render__frame(atom a[], const int n, const int W, const int H, uint8_t fram
             v.x = (j - canvas_origin.x) * box_radius / (W / 2.f);
 
             for (int k = s; k < t; ++k) {
+                vec r = sub(v, a[k].r);
+                r = physics__periodic_shift(r, box_radius);
+
+                frame[i][j] = (uint8_t) roundf(fminf(127.f, frame[i][j] + 127.f * witch_of_Agnesi(r)));
 #ifdef NANTIALIAS
                 frame[i][j] = (uint8_t) fminf(127, frame[i][j] + 127 * (dist_sq(v, a[k].r) <= 1));
 #else
