@@ -17,6 +17,6 @@ typedef struct {
 
 
 void physics__lattice_populate(atom a[], const int n, const float box_radius);
-void physics__update(atom a[], const int n, const float ellapsed_time, const float box_radius);
+void physics__update(atom a[], const int n, const float dt, const float box_radius);
 void physics__sort_by_Y(atom a[], const int n);
 vec physics__periodic_shift(vec v, const float box_radius);

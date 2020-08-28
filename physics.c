@@ -75,12 +75,12 @@ inline vec physics__periodic_shift(vec v, const float box_radius) {
     return v;
 }
 
-inline void physics__update(atom a[], const int n, const float ellapsed_time, const float box_radius) {
+inline void physics__update(atom a[], const int n, const float dt, const float box_radius) {
     for (int i = 0; i < n; ++i) {
-        a[i].v.x += 0.5 * a[i].a.x * ellapsed_time;
-        a[i].v.y += 0.5 * a[i].a.y * ellapsed_time;
-        a[i].r.x += a[i].v.x * ellapsed_time;
-        a[i].r.y += a[i].v.y * ellapsed_time;
+        a[i].v.x += 0.5 * a[i].a.x * dt;
+        a[i].v.y += 0.5 * a[i].a.y * dt;
+        a[i].r.x += a[i].v.x * dt;
+        a[i].r.y += a[i].v.y * dt;
         a[i].a.x = 0;
         a[i].a.y = 0;
     }
@@ -100,8 +100,8 @@ inline void physics__update(atom a[], const int n, const float ellapsed_time, co
     }
 
     for (int i = 0; i < n; ++i) {
-        a[i].v.x += 0.5 * a[i].a.x * ellapsed_time;
-        a[i].v.y += 0.5 * a[i].a.y * ellapsed_time;
+        a[i].v.x += 0.5 * a[i].a.x * dt;
+        a[i].v.y += 0.5 * a[i].a.y * dt;
     }
 
     for (int i = 0; i < n; ++i) {
