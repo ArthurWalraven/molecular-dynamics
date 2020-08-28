@@ -24,8 +24,6 @@ inline void physics__lattice_populate(atom a[], const int n, const float box_rad
     for (int i = 0; i < n; ++i) {
         a[i].v.x = (2 * randf() - 1) * 1;
         a[i].v.y = (2 * randf() - 1) * 1;
-        // a[i].v.x = 0;
-        // a[i].v.y = 0;
 
         a[i].a.x = 0;
         a[i].a.y = 0;
