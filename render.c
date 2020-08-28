@@ -298,11 +298,31 @@ void render__frame(atom a[], const int n, const int W, const int H, uint8_t fram
                 r = physics__periodic_shift(r, box_radius);
 
                 frame[i][j] = (uint8_t) roundf(fminf(127.f, frame[i][j] + 127.f * witch_of_Agnesi(r)));
-#ifdef NANTIALIAS
-                frame[i][j] = (uint8_t) fminf(127, frame[i][j] + 127 * (dist_sq(v, a[k].r) <= 1));
-#else
-                frame[i][j] = (uint8_t) roundf(fminf(127.f, frame[i][j] + 127.f * witch_of_Agnesi(v, a[k].r)));
-#endif
+            }
+
+            if_unlikely (v.y > box_radius - rendering_radius) {
+                for (int k = n-1; k >= 0; --k) {
+                    if (a[k].r.y + 2 * box_radius - rendering_radius > v.y) {
+                        break;
+                    }
+
+                    vec r = sub(v, (vec) {a[k].r.x, a[k].r.y + 2 * box_radius});
+                    r = physics__periodic_shift(r, box_radius);
+
+                    frame[i][j] = (uint8_t) roundf(fminf(127.f, frame[i][j] + 127.f * witch_of_Agnesi(r)));
+                }
+            }
+            else if_unlikely (v.y < -box_radius + rendering_radius) {
+                for (int k = 0; k < n; ++k) {
+                    if (a[k].r.y - 2 * box_radius + rendering_radius < v.y) {
+                        break;
+                    }
+
+                    vec r = sub(v, (vec) {a[k].r.x, a[k].r.y - 2 * box_radius});
+                    r = physics__periodic_shift(r, box_radius);
+
+                    frame[i][j] = (uint8_t) roundf(fminf(127.f, frame[i][j] + 127.f * witch_of_Agnesi(r)));
+                }
             }
         }
     }
