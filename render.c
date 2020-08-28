@@ -14,6 +14,7 @@
 #endif
 
 
+// From https://en.wikipedia.org/wiki/Witch_of_Agnesi
 static inline float witch_of_Agnesi(const vec v, const vec c) {
     return 1/(1 + sq(WITCH_CONSTANT) * dist_sq(v, c));
 }
