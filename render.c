@@ -282,12 +282,10 @@ void render__frame(atom a[], const int n, const int W, const int H, uint8_t fram
         vec v = {.y = -(i - canvas_origin.y) * box_radius / (W / 2.f)};
 
         const float rendering_radius = 15.93738f / WITCH_CONSTANT;
-        while ((s < n) && (a[s].r.y - rendering_radius > v.y))
-        {
+        while ((s < n) && (a[s].r.y - rendering_radius > v.y)) {
             ++s;
         }
-        while ((t < n) && (a[t].r.y + rendering_radius > v.y))
-        {
+        while ((t < n) && (a[t].r.y + rendering_radius > v.y)) {
             ++t;
         }
 
