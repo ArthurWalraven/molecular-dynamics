@@ -65,6 +65,7 @@ inline void physics__update(atom a[], const int n, const float ellapsed_time, co
         a[i].a.y = 0;
     }
 
+    #pragma omp parallel for
     for (int i = 0; i < n-1; ++i) {
         for (int j = i+1; j < n; ++j) {
             vec dr = sub(a[j].r, a[i].r);
