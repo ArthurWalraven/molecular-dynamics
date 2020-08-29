@@ -68,7 +68,7 @@ Params process_arguments(const int argc, char * const argv[]) {
             case '?':
             default:
                 items_read = 0;
-                // Roll over
+                // fall through
 
             case 'h':
                 fprintf(stderr,
