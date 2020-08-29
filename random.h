@@ -4,6 +4,11 @@
 #include <stdint.h>
 
 #include "global.h"
+#include "vec.h"
+
+
+// Marsaglia polar method
+vec normal_vec();
 
 
 __always_inline
