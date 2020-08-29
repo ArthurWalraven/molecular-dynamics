@@ -310,7 +310,7 @@ void render__frame(atom a[], const int n, const int W, const int H, uint8_t fram
                         break;
                     }
 
-                    vec r = sub(v, (vec) {a[k].r.x, a[k].r.y + 2 * box_radius});
+                    vec r = sub(v, to_vec(a[k].r.x, a[k].r.y + 2 * box_radius));
                     r = physics__periodic_boundary_shift(r, box_radius);
 
                     colour_pixel(&frame[i][j], r);
@@ -322,7 +322,7 @@ void render__frame(atom a[], const int n, const int W, const int H, uint8_t fram
                         break;
                     }
 
-                    vec r = sub(v, (vec) {a[k].r.x, a[k].r.y - 2 * box_radius});
+                    vec r = sub(v, to_vec(a[k].r.x, a[k].r.y - 2 * box_radius));
                     r = physics__periodic_boundary_shift(r, box_radius);
 
                     colour_pixel(&frame[i][j], r);
