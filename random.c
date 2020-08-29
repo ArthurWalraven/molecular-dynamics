@@ -35,6 +35,7 @@ float stddev(const float a[], const int n, const float mu) {
     for (int i = 0; i < n; ++i) {
         variance += sq(mu - a[i]);
     }
+    variance /= n;
 
     return sqrtf(variance);
 }
