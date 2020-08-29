@@ -8,8 +8,9 @@
 #include <sys/resource.h>
 
 
-#define if_likely(exp)      if (__builtin_expect(exp, true))
-#define if_unlikely(exp)    if (__builtin_expect(exp, false))
+#define likely(exp)     (__builtin_expect(exp, true))
+#define unlikely(exp)	(__builtin_expect(exp, false))
+#define with_probability(p, exp)	(__builtin_expect_with_probability(exp, true, p))
 
 #define sq(a)   ((a) * (a))
 
