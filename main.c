@@ -7,6 +7,8 @@
 #include "render.h"
 #include "random.h"
 
+
+// To help IDE highlighting
 #ifndef NRENDER
 #define DORENDER
 #endif
