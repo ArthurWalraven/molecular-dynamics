@@ -18,6 +18,11 @@ typedef struct {
 
 
 __always_inline
+vec to_vec(const float x, const float y) {
+    return (vec) {.x = x, .y = y};
+}
+
+__always_inline
 vec add(const vec a, const vec b) {
     return (vec) {
         .x = a.x + b.x,
