@@ -47,8 +47,7 @@ int main(const int argc, char * const argv[]) {
 
 #ifdef DORENDER
             if (((t+1) * update_time_step) - frame_time_tracker >= frame_time_step) {
-                printf("\rupdate: %4d/%d\tframe: %3d/%d", t+1, params.n_updates, frame_counter+1, params.n_frames);
-                // fflush(stdin);
+                printf("\rupdate: %4d/%d\tframe: %3d/%d", t+1, params.n_updates, frame_counter, params.n_frames);
 
                 render__frame(a, params.n, params.frame_W, params.frame_H, frames[frame_counter], params.box_radius);
 
@@ -57,7 +56,7 @@ int main(const int argc, char * const argv[]) {
             }
 #endif
         }
-        printf("\rupdate: %4d/%d\tframe: %3d/%d\n", params.n_updates, params.n_updates, frame_counter+1, params.n_frames);
+        printf("\rupdate: %4d/%d\tframe: %3d/%d\n", params.n_updates, params.n_updates, frame_counter, params.n_frames);
     )
     //*/
 
