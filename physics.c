@@ -29,6 +29,7 @@ inline void physics__lattice_populate(atom a[], const int n, const float box_rad
     }
 }
 
+// Insertion sort
 inline void physics__sort_by_Y(atom a[], const int n) {
     for (int i = 1; i < n; ++i) {
         if unlikely(a[i].r.y > a[i-1].r.y) {
@@ -52,6 +53,7 @@ inline void physics__sort_by_Y(atom a[], const int n) {
     )
 }
 
+// Periodic Boundary Condition
 inline vec physics__periodic_boundary_shift(vec v, const float box_radius) {
     if unlikely(norm_max(v) > box_radius) {
         if unlikely(v.x > box_radius) {
@@ -91,7 +93,7 @@ inline void physics__update(atom a[], const int n, const float dt, const float b
 
             const float recip_drdr = 1/dot(dr, dr);
 
-            // See https://en.wikipedia.org/wiki/Lennard-Jones_potential
+            // Gradient of the Lennard-Jones potential
             const vec acc = mul(dr, -24 * recip_drdr * ( 2 * powf(recip_drdr, 6) - powf(recip_drdr, 3)));
 
             a[i].a = add(a[i].a, acc);
@@ -104,7 +106,6 @@ inline void physics__update(atom a[], const int n, const float dt, const float b
         a[i].v.y += 0.5 * a[i].a.y * dt;
     }
 
-    // See https://en.wikipedia.org/wiki/Periodic_boundary_conditions
     for (int i = 0; i < n; ++i) {
         a[i].r = physics__periodic_boundary_shift(a[i].r, box_radius);
     }
