@@ -15,6 +15,23 @@ inline vec normal_vec() {
     return mul(t, f);
 }
 
+inline float normal() {
+    static bool has_cached_value = false;
+    static float cached_value;
+
+    if (has_cached_value) {
+        has_cached_value = false;
+        return cached_value;
+    }
+
+    const vec r = normal_vec();
+
+    has_cached_value = true;
+    cached_value = r.x;
+
+    return r.y;
+}
+
 float mean(const float a[], const int n) {
     assert(n > 0);
 
@@ -49,8 +66,9 @@ void test_random() {
         exit(EXIT_FAILURE);
     }
 
-    for (int i = 0; i < n/2; ++i) {
-        ((vec *) a)[i] = normal_vec();
+
+    for (int i = 0; i < n; ++i) {
+        a[i] = normal();
     }
     
     float mu = mean(a, n);

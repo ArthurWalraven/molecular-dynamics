@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "global.h"
 #include "vec.h"
@@ -10,6 +11,7 @@
 
 // Marsaglia polar method
 vec normal_vec();
+float normal();
 float mean(const float a[], const int n);
 float stddev(const float a[], const int n, const float mu);
 
