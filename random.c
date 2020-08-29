@@ -19,7 +19,7 @@ inline float normal() {
     static bool has_cached_value = false;
     static float cached_value;
 
-    if with_probability(0.5, has_cached_value) {
+    if (has_cached_value) {
         has_cached_value = false;
         return cached_value;
     }

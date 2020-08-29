@@ -10,7 +10,7 @@
 
 #define likely(exp)     (__builtin_expect(exp, true))
 #define unlikely(exp)	(__builtin_expect(exp, false))
-#define with_probability(p, exp)	(__builtin_expect_with_probability(exp, true, p))
+// #define with_probability(p, exp)	(__builtin_expect_with_probability(exp, true, p))
 
 #define sq(a)   ((a) * (a))
 
