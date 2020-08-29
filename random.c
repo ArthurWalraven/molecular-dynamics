@@ -39,3 +39,22 @@ float stddev(const float a[], const int n, const float mu) {
     return sqrtf(variance);
 }
 
+void test_random() {
+    const int n = 1e6;
+
+    float * a = malloc(n * sizeof(*a));
+
+    for (int i = 0; i < n/2; ++i) {
+        ((vec *) a)[i] = normal_vec();
+    }
+    
+    float mu = mean(a, n);
+    float sigma = stddev(a, n, mu);
+
+    printf(
+        "n: %d\n"
+        "mu: %.3f\n"
+        "sigma: %.3f\n",
+        n, mu, sigma
+    );
+}

@@ -5,6 +5,7 @@
 #include "read_args.h"
 #include "physics.h"
 #include "render.h"
+#include "random.h"
 
 #ifndef NRENDER
 #define DORENDER
@@ -12,6 +13,14 @@
 
 
 int main(const int argc, char * const argv[]) {
+    // Tests
+    TEST(
+        test_random();
+
+        return 0;
+    )
+
+
     const Params params = process_arguments(argc, argv);
 
 #ifdef DORENDER

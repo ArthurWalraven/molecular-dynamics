@@ -12,6 +12,8 @@ vec normal_vec();
 float mean(const float a[], const int n);
 float stddev(const float a[], const int n, const float mu);
 
+void test_random();
+
 
 __always_inline
 uint64_t rand_fast() {
