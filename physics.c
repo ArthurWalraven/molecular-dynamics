@@ -91,6 +91,7 @@ inline void physics__update(atom a[], const int n, const float dt, const float b
             dr = physics__periodic_boundary_shift(dr, box_radius);
 
             const float recip_drdr = 1/dot(dr, dr);
+            
             // See https://en.wikipedia.org/wiki/Lennard-Jones_potential
             const vec acc = mul(dr, -24 * recip_drdr * ( 2 * powf(recip_drdr, 6) - powf(recip_drdr, 3)));
 
