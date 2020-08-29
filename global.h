@@ -40,8 +40,9 @@
 		+ (real_time_end.tv_nsec - real_time_start.tv_nsec)/1e9);\
 }
 
-#ifdef NDEBUG
+#ifdef NTEST
 #define TEST(exp) (void) (0);
 #else
+#define NDEBUG
 #define TEST(exp) {exp}
 #endif

@@ -16,8 +16,6 @@ int main(const int argc, char * const argv[]) {
     // Tests
     TEST(
         test_random();
-
-        return 0;
     )
 
 
