@@ -31,7 +31,7 @@ inline void physics__lattice_populate(atom a[], const int n, const float box_rad
 
 inline void physics__sort_by_Y(atom a[], const int n) {
     for (int i = 1; i < n; ++i) {
-        if_unlikely (a[i].r.y > a[i-1].r.y) {
+        if unlikely(a[i].r.y > a[i-1].r.y) {
             int j = i-2;
             while ((j >= 0) && (a[j].r.y <= a[i].r.y)) {
                 --j;
@@ -53,15 +53,15 @@ inline void physics__sort_by_Y(atom a[], const int n) {
 }
 
 inline vec physics__periodic_boundary_shift(vec v, const float box_radius) {
-    if_unlikely(norm_max(v) > box_radius) {
-        if_unlikely(v.x > box_radius) {
+    if unlikely(norm_max(v) > box_radius) {
+        if unlikely(v.x > box_radius) {
             v.x -= 2 * box_radius;
         }
         else if (v.x < -box_radius) {
             v.x += 2 * box_radius;
         }
 
-        if_unlikely(v.y > box_radius) {
+        if unlikely(v.y > box_radius) {
             v.y -= 2 * box_radius;
         }
         else if (v.y < -box_radius) {

@@ -304,7 +304,7 @@ void render__frame(atom a[], const int n, const int W, const int H, uint8_t fram
                 colour_pixel(&frame[i][j], r);
             }
 
-            if_unlikely (v.y > box_radius - rendering_radius) {
+            if unlikely(v.y > box_radius - rendering_radius) {
                 for (int k = n-1; k >= 0; --k) {
                     if (a[k].r.y + 2 * box_radius - rendering_radius > v.y) {
                         break;
@@ -316,7 +316,7 @@ void render__frame(atom a[], const int n, const int W, const int H, uint8_t fram
                     colour_pixel(&frame[i][j], r);
                 }
             }
-            else if_unlikely (v.y < -box_radius + rendering_radius) {
+            else if unlikely(v.y < -box_radius + rendering_radius) {
                 for (int k = 0; k < n; ++k) {
                     if (a[k].r.y - 2 * box_radius + rendering_radius < v.y) {
                         break;
