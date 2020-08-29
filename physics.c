@@ -22,8 +22,7 @@ inline void physics__lattice_populate(atom a[], const int n, const float box_rad
     }
 
     for (int i = 0; i < n; ++i) {
-        a[i].v.x = (2 * randf() - 1) * 1;
-        a[i].v.y = (2 * randf() - 1) * 1;
+        a[i].v = normal_vec();
 
         a[i].a.x = 0;
         a[i].a.y = 0;
@@ -73,7 +72,7 @@ inline vec physics__periodic_boundary_shift(vec v, const float box_radius) {
     return v;
 }
 
-// See https://en.wikipedia.org/wiki/Verlet_integration#Velocity_Verlet
+// Velocity verlet
 inline void physics__update(atom a[], const int n, const float dt, const float box_radius) {
     for (int i = 0; i < n; ++i) {
         a[i].v.x += 0.5 * a[i].a.x * dt;
@@ -91,7 +90,7 @@ inline void physics__update(atom a[], const int n, const float dt, const float b
             dr = physics__periodic_boundary_shift(dr, box_radius);
 
             const float recip_drdr = 1/dot(dr, dr);
-            
+
             // See https://en.wikipedia.org/wiki/Lennard-Jones_potential
             const vec acc = mul(dr, -24 * recip_drdr * ( 2 * powf(recip_drdr, 6) - powf(recip_drdr, 3)));
 
