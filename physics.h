@@ -7,6 +7,7 @@
 
 #include "global.h"
 #include "vec.h"
+#include "random.h"
 
 
 typedef struct {
