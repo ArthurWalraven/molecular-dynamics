@@ -9,6 +9,8 @@
 
 // Marsaglia polar method
 vec normal_vec();
+float mean(const float a[], const int n);
+float stddev(const float a[], const int n, const float mu);
 
 
 __always_inline
