@@ -28,5 +28,5 @@ uint64_t rand_fast() {
 
 __always_inline
 float randf() {
-	return (float) rand_fast() / UINT64_MAX;
+	return rand_fast() / ((float) UINT64_MAX);
 }

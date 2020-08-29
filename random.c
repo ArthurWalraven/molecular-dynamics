@@ -43,6 +43,10 @@ void test_random() {
     const int n = 1e6;
 
     float * a = malloc(n * sizeof(*a));
+    if (!a) {
+        perror("'malloc()' failed");
+        exit(EXIT_FAILURE);
+    }
 
     for (int i = 0; i < n/2; ++i) {
         ((vec *) a)[i] = normal_vec();
@@ -53,8 +57,10 @@ void test_random() {
 
     printf(
         "n: %d\n"
-        "mu: %.3f\n"
-        "sigma: %.3f\n",
+        "mu: %g\n"
+        "sigma: %g\n",
         n, mu, sigma
     );
+
+    free(a);
 }
