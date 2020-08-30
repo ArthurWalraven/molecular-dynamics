@@ -14,6 +14,9 @@
 #endif
 
 
+#define FRAMES_DIRECTORY_PATH "frames/"
+#define FRAME_FILE_NAME_PREFIX  FRAMES_DIRECTORY_PATH "frame_"
+
 // See https://en.wikipedia.org/wiki/Witch_of_Agnesi
 static inline float witch_of_Agnesi(const vec v) {
     return 1/(1 + sq(WITCH_CONSTANT) * norm_sq(v));
@@ -282,7 +285,7 @@ void render__frame(atom a[], const int n, const int W, const int H, uint8_t fram
 
     int s = 0;
     int t = 0;
-    #pragma omp parallel for firstprivate(s, t) schedule(static)
+    #pragma omp parallel for schedule(static) firstprivate(s, t)
     for (int i = 0; i < H; ++i) {
         vec v = {.y = -(i - canvas_origin.y) * box_radius / (W / 2.f)};
 
