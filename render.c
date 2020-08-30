@@ -1,12 +1,6 @@
 #include "render.h"
 
 
-#define WITCH_CONSTANT 6.f
-
-#define FRAMES_DIRECTORY_PATH "frames/"
-#define FRAME_FILE_NAME_PREFIX  FRAMES_DIRECTORY_PATH "frame_"
-
-
 #if BYTE_ORDER == BIG_ENDIAN
 #define to_little_endian16(x)   __builtin_bswap16((uint16_t) (x))
 #else
@@ -17,13 +11,18 @@
 #define FRAMES_DIRECTORY_PATH "frames/"
 #define FRAME_FILE_NAME_PREFIX  FRAMES_DIRECTORY_PATH "frame_"
 
+#define WITCH_CONSTANT  6.f
+#define RENDER_RADIUS   (15.93738f / WITCH_CONSTANT)
+
 // See https://en.wikipedia.org/wiki/Witch_of_Agnesi
 static inline float witch_of_Agnesi(const vec v) {
     return 1/(1 + sq(WITCH_CONSTANT) * norm_sq(v));
 }
 
 static inline void colour_pixel(uint8_t * restrict p, const vec r) {
-    *p = (uint8_t) roundf(fminf(127.f, *p + 127.f * witch_of_Agnesi(r)));
+    if unlikely(norm_sq(r) < RENDER_RADIUS) {
+        *p = (uint8_t) roundf(fminf(127.f, *p + 127.f * witch_of_Agnesi(r)));
+    }
 }
 
 static void to_BMP(const int W, const int H, const uint8_t canvas[][W]) {
@@ -289,11 +288,10 @@ void render__frame(atom a[], const int n, const int W, const int H, uint8_t fram
     for (int i = 0; i < H; ++i) {
         vec v = {.y = -(i - canvas_origin.y) * box_radius / (W / 2.f)};
 
-        const float rendering_radius = 15.93738f / WITCH_CONSTANT;
-        while ((s < n) && (a[s].r.y - rendering_radius > v.y)) {
+        while ((s < n) && (a[s].r.y - RENDER_RADIUS > v.y)) {
             ++s;
         }
-        while ((t < n) && (a[t].r.y + rendering_radius > v.y)) {
+        while ((t < n) && (a[t].r.y + RENDER_RADIUS > v.y)) {
             ++t;
         }
 
@@ -307,9 +305,9 @@ void render__frame(atom a[], const int n, const int W, const int H, uint8_t fram
                 colour_pixel(&frame[i][j], r);
             }
 
-            if unlikely(v.y > box_radius - rendering_radius) {
+            if unlikely(v.y > box_radius - RENDER_RADIUS) {
                 for (int k = n-1; k >= 0; --k) {
-                    if (a[k].r.y + 2 * box_radius - rendering_radius > v.y) {
+                    if (a[k].r.y + 2 * box_radius - RENDER_RADIUS > v.y) {
                         break;
                     }
 
@@ -319,9 +317,9 @@ void render__frame(atom a[], const int n, const int W, const int H, uint8_t fram
                     colour_pixel(&frame[i][j], r);
                 }
             }
-            else if unlikely(v.y < -box_radius + rendering_radius) {
+            else if unlikely(v.y < -box_radius + RENDER_RADIUS) {
                 for (int k = 0; k < n; ++k) {
-                    if (a[k].r.y - 2 * box_radius + rendering_radius < v.y) {
+                    if (a[k].r.y - 2 * box_radius + RENDER_RADIUS < v.y) {
                         break;
                     }
 
