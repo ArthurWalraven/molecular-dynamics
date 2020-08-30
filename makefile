@@ -4,8 +4,8 @@ CFLAGS = -flto -march=native -ffast-math
 LFLAGS = $(CFLAGS)
 LIBS = -lm -fopenmp
 OFLAGS = -O3 -DNTEST -DNDEBUG -fopenmp # -DNRENDER -DNBENCH
-DFLAGS = -O1 -g3 -fno-omit-frame-pointer
-DLFLAGS = $(DFLAGS) -no-pie
+DFLAGS = -O1 -g3 -fno-omit-frame-pointer -DNTEST
+DLFLAGS = $(DFLAGS) -fno-pic -no-pie
 
 TSAN = -fsanitize=thread -fsanitize=undefined
 ASAN = -fsanitize=address -fsanitize=leak -fsanitize=undefined
@@ -30,7 +30,7 @@ $(TARGET): $(OBJS)
 	$(CC) -o $(TARGET) $(OBJS) $(LFLAGS) $(LIBS) $(OFLAGS)
 
 $(OUTPUT): $(TARGET) makefile
-	touch $@
+	$(MAKE) run
 
 
 .PHONY = clean all debug show run run_small
