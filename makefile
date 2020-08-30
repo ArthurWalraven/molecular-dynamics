@@ -1,10 +1,11 @@
 CC = clang-10
 WFLAGS = -Wall -Wextra -Wwrite-strings -Wshadow
-CFLAGS = -flto -march=native -ffast-math -fopenmp
-LFLAGS = -flto -march=native -ffast-math -fopenmp
+CFLAGS = -flto -march=native -ffast-math
+LFLAGS = $(CFLAGS)
 LIBS = -lm -fopenmp
-OFLAGS = -O3 -DNTEST -DNDEBUG
-DFLAGS = -O1 -g3 -fno-omit-frame-pointer# -fPIE -pie
+OFLAGS = -O3 -DNTEST -DNDEBUG -fopenmp
+DFLAGS = -O1 -g3 -fno-omit-frame-pointer
+DLFLAGS = $(DFLAGS) -no-pie
 
 TSAN = -fsanitize=thread -fsanitize=undefined
 ASAN = -fsanitize=address -fsanitize=leak -fsanitize=undefined
@@ -20,25 +21,30 @@ OUTPUT = animation.gif
 %.c: *.h
 	touch $@
 
+# Compile
 $(ODIR)/%.o: %.c
-	$(CC) $(CFLAGS) $(WFLAGS) $(DFLAGS) -c $^ -o $@
+	$(CC) $(WFLAGS) $(CFLAGS) $(OFLAGS) -c $^ -o $@
 
+#Link
 $(TARGET): $(OBJS)
-	$(CC) -o $(TARGET) $(OBJS) $(LFLAGS) $(LIBS)
+	$(CC) -o $(TARGET) $(OBJS) $(LFLAGS) $(LIBS) $(OFLAGS)
 
 $(OUTPUT): $(TARGET) makefile
 	touch $@
 
 
-.PHONY = all run clean
-
-all: $(TARGET)
-
-run: $(TARGET)
-	./$(TARGET) --n=1682 --time=1.0 --box-radius=20.0 --avg-speed=32.0 --ups=400.0 --fps=50.0 --resolution=500 --output-file=$(OUTPUT)
+.PHONY = clean all debug run show
 
 clean:
 	$(RM) $(TARGET) $(OBJS) $(OUTPUT)
+
+all: $(TARGET)
+
+debug:
+	$(CC) $(SRCS) $(WFLAGS) $(DFLAGS) -o $(TARGET) $(DLFLAGS) $(LIBS)
+
+run: $(TARGET)
+	./$(TARGET) --n=1682 --time=1.0 --box-radius=20.0 --avg-speed=32.0 --ups=400.0 --fps=50.0 --resolution=240 --output-file=$(OUTPUT)
 
 show: $(OUTPUT)
 	code $(OUTPUT)
