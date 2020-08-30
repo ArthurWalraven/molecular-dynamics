@@ -1,5 +1,7 @@
 /.vscode
 /exe
-animation.gif
 /frames/*.bmp
 !samples/sample.bmp
+
+animation.gif
+*.out
