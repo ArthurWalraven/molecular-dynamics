@@ -1,3 +1,9 @@
+SRCS = main.c global.c vec.c physics.c random.c read_args.c render.c
+ODIR = objs
+OBJS = $(patsubst %,$(ODIR)/%,$(SRCS:.c=.o))
+TARGET = exe
+OUTPUT = animation.gif
+
 CC = clang-10
 WFLAGS = -Wall -Wextra -Wwrite-strings -Wshadow
 CFLAGS = -flto -march=native -ffast-math
@@ -10,12 +16,6 @@ DLFLAGS = $(DFLAGS) -fno-pic -no-pie
 TSAN = -fsanitize=thread -fsanitize=undefined
 ASAN = -fsanitize=address -fsanitize=leak -fsanitize=undefined
 MSAN = -fsanitize=memory -fsanitize=undefined
-
-SRCS = main.c global.c vec.c physics.c random.c read_args.c render.c
-ODIR = objs
-OBJS = $(patsubst %,$(ODIR)/%,$(SRCS:.c=.o))
-TARGET = exe
-OUTPUT = animation.gif
 
 
 %.c: *.h
@@ -43,11 +43,11 @@ all: $(TARGET)
 debug:
 	$(CC) $(SRCS) $(WFLAGS) $(DFLAGS) -o $(TARGET) $(DLFLAGS) $(LIBS)
 
-show: $(OUTPUT)
+show:
 	code $(OUTPUT)
 
 run:
-	./$(TARGET) --n=1682 --time=10.0 --box-radius=20.0 --avg-speed=0.0 --ups=1000.0 --fps=50.0 --resolution=480 --output-file=$(OUTPUT)
+	./$(TARGET) --n=1682 --time=10.0 --box-radius=20.0 --avg-speed=1.0 --ups=1000.0 --fps=50.0 --resolution=480 --output-file=$(OUTPUT)
 
 run_small:
-	./$(TARGET) --n=400 --time=1.0 --box-radius=10.0 --avg-speed=0.0 --ups=100.0 --fps=24.0 --resolution=240 --output-file=$(OUTPUT)
+	./$(TARGET) --n=200 --time=1.0 --box-radius=10.0 --avg-speed=1.0 --ups=200.0 --fps=24.0 --resolution=240 --output-file=$(OUTPUT)
