@@ -1,4 +1,5 @@
 /.vscode
+/objs
 /exe
 /frames/*.bmp
 !samples/sample.bmp
