@@ -40,14 +40,14 @@ clean:
 
 all: $(TARGET)
 
-debug: clean
+debug:
 	$(CC) $(SRCS) $(WFLAGS) $(DFLAGS) -o $(TARGET) $(DLFLAGS) $(LIBS)
 
 show: $(OUTPUT)
 	code $(OUTPUT)
 
-run: $(TARGET)
-	./$(TARGET) --n=1682 --time=10.0 --box-radius=20.0 --avg-speed=32.0 --ups=1000.0 --fps=50.0 --resolution=480 --output-file=$(OUTPUT)
+run:
+	./$(TARGET) --n=1682 --time=10.0 --box-radius=20.0 --avg-speed=0.0 --ups=1000.0 --fps=50.0 --resolution=480 --output-file=$(OUTPUT)
 
-run_small: $(TARGET)
-	./$(TARGET) --n=400 --time=1.0 --box-radius=10.0 --avg-speed=32.0 --ups=100.0 --fps=24.0 --resolution=240 --output-file=$(OUTPUT)
+run_small:
+	./$(TARGET) --n=400 --time=1.0 --box-radius=10.0 --avg-speed=0.0 --ups=100.0 --fps=24.0 --resolution=240 --output-file=$(OUTPUT)
