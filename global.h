@@ -19,6 +19,9 @@
 
 #define LOG(format, exp)	printf("%s:" STRINGFY(__LINE__) ": " #exp " = " format "\n", __func__, (exp))
 
+#ifdef NBENCH
+#define BENCH(str, exp)	exp
+#else
 #define BENCH(str, exp)	{\
 	puts(!(str[0]) ? "\nStart" : "\nStart: " str);\
 \
@@ -40,6 +43,7 @@
 		(real_time_end.tv_sec - real_time_start.tv_sec)\
 		+ (real_time_end.tv_nsec - real_time_start.tv_nsec)/1e9);\
 }
+#endif
 
 #ifdef NTEST
 #define TEST(exp) (void) (0);
