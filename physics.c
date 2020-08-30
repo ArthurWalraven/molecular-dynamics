@@ -76,35 +76,40 @@ inline vec physics__periodic_boundary_shift(vec v, const float box_radius) {
 
 // Velocity verlet
 inline void physics__update(atom a[], const int n, const float dt, const float box_radius) {
-    for (int i = 0; i < n; ++i) {
-        a[i].v.x += 0.5 * a[i].a.x * dt;
-        a[i].v.y += 0.5 * a[i].a.y * dt;
-        a[i].r.x += a[i].v.x * dt;
-        a[i].r.y += a[i].v.y * dt;
-        a[i].a.x = 0;
-        a[i].a.y = 0;
-    }
-
-    #pragma omp parallel for
-    for (int i = 0; i < n-1; ++i) {
-        for (int j = i+1; j < n; ++j) {
-            vec dr = sub(a[j].r, a[i].r);
-            dr = physics__periodic_boundary_shift(dr, box_radius);
-
-            const float recip_drdr = 1/dot(dr, dr);
-
-            // Gradient of the Lennard-Jones potential
-            const vec acc = mul(dr, -24 * recip_drdr * ( 2 * powf(recip_drdr, 6) - powf(recip_drdr, 3)));
-
-            a[i].a = add(a[i].a, acc);
-            a[j].a = sub(a[j].a, acc);
+    #pragma omp parallel
+    {
+        #pragma omp for schedule(static)
+        for (int i = 0; i < n; ++i) {
+            a[i].v.x += 0.5 * a[i].a.x * dt;
+            a[i].v.y += 0.5 * a[i].a.y * dt;
+            a[i].r.x += a[i].v.x * dt;
+            a[i].r.y += a[i].v.y * dt;
+            a[i].a.x = 0;
+            a[i].a.y = 0;
         }
-    }
 
-    for (int i = 0; i < n; ++i) {
-        a[i].v.x += 0.5 * a[i].a.x * dt;
-        a[i].v.y += 0.5 * a[i].a.y * dt;
+        #pragma omp for schedule(static)
+        for (int i = 0; i < n-1; ++i) {
+            for (int j = i+1; j < n; ++j) {
+                vec dr = sub(a[j].r, a[i].r);
+                dr = physics__periodic_boundary_shift(dr, box_radius);
 
-        a[i].r = physics__periodic_boundary_shift(a[i].r, box_radius);
+                const float recip_drdr = 1/dot(dr, dr);
+
+                // Gradient of the Lennard-Jones potential
+                const vec acc = mul(dr, -24 * recip_drdr * ( 2 * powf(recip_drdr, 6) - powf(recip_drdr, 3)));
+
+                a[i].a = add(a[i].a, acc);
+                a[j].a = sub(a[j].a, acc);
+            }
+        }
+
+        #pragma omp for schedule(static)
+        for (int i = 0; i < n; ++i) {
+            a[i].v.x += 0.5 * a[i].a.x * dt;
+            a[i].v.y += 0.5 * a[i].a.y * dt;
+
+            a[i].r = physics__periodic_boundary_shift(a[i].r, box_radius);
+        }
     }
 }
