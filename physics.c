@@ -76,7 +76,7 @@ inline vec physics__periodic_boundary_shift(vec v, const float box_radius) {
 
 // Velocity verlet
 inline void physics__update(atom a[], const int n, const float dt, const float box_radius) {
-    vec accs[omp_get_max_threads()][n];
+    vec accs[THREAD_COUNT][n];
 
     #pragma omp parallel
     {
@@ -91,7 +91,7 @@ inline void physics__update(atom a[], const int n, const float dt, const float b
         }
 
         #pragma omp for schedule(static)
-        for (int t = 0; t < omp_get_max_threads(); ++t) {
+        for (int t = 0; t < THREAD_COUNT; ++t) {
             for (int i = 0; i < n; ++i) {
                 accs[t][i] = to_vec(0, 0);
             }
@@ -125,7 +125,7 @@ inline void physics__update(atom a[], const int n, const float dt, const float b
         }
 
         #pragma omp single
-        for (int t = 0; t < omp_get_max_threads(); ++t) {
+        for (int t = 0; t < THREAD_COUNT; ++t) {
             for (int i = 0; i < n; ++i) {
                 a[i].a = add(a[i].a, accs[t][i]);
             }
