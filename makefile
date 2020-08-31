@@ -10,7 +10,7 @@ CFLAGS = -flto -march=native -ffast-math
 LFLAGS = $(CFLAGS)
 LIBS = -lm -fopenmp
 OFLAGS = -O3 -DNTEST -DNDEBUG -fopenmp # -DNRENDER -DNBENCH
-DFLAGS = -O1 -g3 -fno-omit-frame-pointer -DNTEST
+DFLAGS = -O2 -g3 -fno-omit-frame-pointer -DNTEST
 DLFLAGS = $(DFLAGS) -fno-pic -no-pie
 
 TSAN = -fsanitize=thread -fsanitize=undefined
@@ -41,13 +41,18 @@ clean:
 all: $(TARGET)
 
 debug:
-	$(CC) $(SRCS) $(WFLAGS) $(DFLAGS) -o $(TARGET) $(DLFLAGS) $(LIBS)
+	$(CC) $(SRCS) $(WFLAGS) $(CFLAGS) $(DFLAGS) -o $(TARGET) $(WFLAGS) $(DLFLAGS) $(LIBS) $(CFLAGS)
+
+profile:
+	$(CC) $(SRCS) $(WFLAGS) $(CFLAGS) $(DFLAGS) -o $(TARGET) $(WFLAGS) $(DLFLAGS) $(LIBS)
+	valgrind --tool=callgrind ./$(TARGET) --n=200 --time=1.0 --box-radius=15.0 --avg-speed=1.0 --ups=1000.0 --fps=50.0 --resolution=100 --output-file=animation.gif
+	callgrind_annotate --auto=yes callgrind.out.* | code -
 
 show:
 	code $(OUTPUT)
 
 run:
-	./$(TARGET) --n=1682 --time=10.0 --box-radius=20.0 --avg-speed=1.0 --ups=1000.0 --fps=50.0 --resolution=480 --output-file=$(OUTPUT)
+	./$(TARGET) --n=1682 --time=10.0 --box-radius=29.0 --avg-speed=1.0 --ups=1000.0 --fps=50.0 --resolution=480 --output-file=$(OUTPUT)
 
 run_small:
 	./$(TARGET) --n=200 --time=1.0 --box-radius=10.0 --avg-speed=1.0 --ups=200.0 --fps=24.0 --resolution=240 --output-file=$(OUTPUT)
