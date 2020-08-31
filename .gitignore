@@ -7,4 +7,5 @@
 animation.gif
 *.out
 *.out.*
+*.log
 profile
