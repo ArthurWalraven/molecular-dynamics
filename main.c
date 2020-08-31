@@ -16,7 +16,7 @@
 
 int main(const int argc, char * const argv[]) {
 #ifndef NDEBUG
-    puts("DEBUG mode.");
+    puts("Running in DEBUG mode");
 #endif
 
     // Tests
