@@ -15,6 +15,10 @@
 
 
 int main(const int argc, char * const argv[]) {
+#ifndef NDEBUG
+    puts("DEBUG mode.");
+#endif
+
     // Tests
     TEST(
         test_random();
