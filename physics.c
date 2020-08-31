@@ -76,6 +76,8 @@ inline vec physics__periodic_boundary_shift(vec v, const float box_radius) {
 
 // Velocity verlet
 inline void physics__update(atom a[], const int n, const float dt, const float box_radius) {
+    vec accs[omp_get_max_threads()][n];
+
     #pragma omp parallel
     {
         #pragma omp for schedule(static)
@@ -89,6 +91,13 @@ inline void physics__update(atom a[], const int n, const float dt, const float b
         }
 
         #pragma omp for schedule(static)
+        for (int t = 0; t < omp_get_max_threads(); ++t) {
+            for (int i = 0; i < n; ++i) {
+                accs[t][i] = to_vec(0, 0);
+            }
+        }
+        
+        #pragma omp for schedule(static)
         for (int i = 0; i < n-1; ++i) {
             for (int j = i+1; j < n; ++j) {
                 vec dr = sub(a[j].r, a[i].r);
@@ -99,17 +108,26 @@ inline void physics__update(atom a[], const int n, const float dt, const float b
                 // Gradient of the Lennard-Jones potential
                 const vec acc = mul(dr, -24 * recip_drdr * ( 2 * powf(recip_drdr, 6) - powf(recip_drdr, 3)));
 
-                #pragma omp atomic update
-                a[i].a.x += acc.x;
+                accs[omp_get_thread_num()][i] = add(accs[omp_get_thread_num()][i], acc);
+                accs[omp_get_thread_num()][j] = sub(accs[omp_get_thread_num()][j], acc);
+                // #pragma omp atomic update
+                // a[i].a.x += acc.x;
 
-                #pragma omp atomic update
-                a[i].a.y += acc.y;
+                // #pragma omp atomic update
+                // a[i].a.y += acc.y;
                 
-                #pragma omp atomic update
-                a[j].a.x -= acc.x;
+                // #pragma omp atomic update
+                // a[j].a.x -= acc.x;
                 
-                #pragma omp atomic update
-                a[j].a.y -= acc.y;
+                // #pragma omp atomic update
+                // a[j].a.y -= acc.y;
+            }
+        }
+
+        #pragma omp single
+        for (int t = 0; t < omp_get_max_threads(); ++t) {
+            for (int i = 0; i < n; ++i) {
+                a[i].a = add(a[i].a, accs[t][i]);
             }
         }
 
