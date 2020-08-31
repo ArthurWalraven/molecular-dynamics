@@ -21,7 +21,7 @@ static inline float witch_of_Agnesi(const vec v) {
 
 static inline void colour_pixel(uint8_t * restrict p, const vec r) {
     if unlikely(norm_sq(r) < RENDER_RADIUS) {
-        *p = (uint8_t) roundf(fminf(127.f, *p + 127.f * witch_of_Agnesi(r)));
+        *p = (uint8_t) fminf(127.f, *p + 127.f * witch_of_Agnesi(r));
     }
 }
 
