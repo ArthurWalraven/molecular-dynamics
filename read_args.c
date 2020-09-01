@@ -128,7 +128,7 @@ Params process_arguments(const int argc, char * const argv[]) {
 
     parameters.frame_W = parameters.resolution;
     parameters.frame_H = parameters.resolution;
-    parameters.n_frames = ceilf(parameters.simulation_time * parameters.fps);   // TODO: Make sure this is right
+    parameters.n_frames = floorf(parameters.simulation_time * parameters.fps);  // TODO: Make sure this is right
     parameters.n_updates = floorf(parameters.simulation_time * parameters.ups); // TODO: Make sure this is right
 
     return parameters;
