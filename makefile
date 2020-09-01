@@ -36,12 +36,12 @@ $(OUTPUT): $(TARGET)
 	$(MAKE) run
 
 
-.PHONY = clean all bench debug show run run_small
+.PHONY = all clean bench debug show run run_small
+
+all: $(TARGET)
 
 clean:
 	$(RM) $(TARGET) $(TARGET).d $(DEPS) $(OBJS) $(OUTPUT)
-
-all: $(TARGET)
 
 debug:
 	$(CC) $(SRCS) $(WFLAGS) $(CFLAGS) $(DFLAGS) -o $(TARGET) $(WFLAGS) $(DLFLAGS) $(LIBS) $(CFLAGS)
