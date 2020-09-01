@@ -8,7 +8,7 @@ PROFDIR = profile
 
 CC = clang-10
 WFLAGS = -Wall -Wextra -Wwrite-strings -Wshadow
-CFLAGS = -MMD -flto -march=native -ffast-math -D THREAD_COUNT=$$(grep -c ^processor /proc/cpuinfo)
+CFLAGS = -flto -march=native -ffast-math -D THREAD_COUNT=$$(grep -c ^processor /proc/cpuinfo)
 LFLAGS = $(CFLAGS)
 LIBS = -lm -fopenmp
 OFLAGS = -O3 -DNTEST -DNDEBUG -fopenmp # -DNRENDER -DNBENCH
@@ -26,7 +26,7 @@ MSAN = -fsanitize=memory -fsanitize=undefined
 
 # Compile
 $(ODIR)/%.o: %.c
-	$(CC) $(WFLAGS) $(CFLAGS) $(OFLAGS) -c $< -o $@
+	$(CC) -MMD $(WFLAGS) $(CFLAGS) $(OFLAGS) -c $< -o $@
 
 #Link
 $(TARGET): $(OBJS)
