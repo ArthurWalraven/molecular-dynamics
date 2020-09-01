@@ -108,19 +108,9 @@ inline void physics__update(atom a[], const int n, const float dt, const float b
                 // Gradient of the Lennard-Jones potential
                 const vec acc = mul(dr, -24 * recip_drdr * ( 2 * powf(recip_drdr, 6) - powf(recip_drdr, 3)));
 
-                accs[omp_get_thread_num()][i] = add(accs[omp_get_thread_num()][i], acc);
-                accs[omp_get_thread_num()][j] = sub(accs[omp_get_thread_num()][j], acc);
-                // #pragma omp atomic update
-                // a[i].a.x += acc.x;
-
-                // #pragma omp atomic update
-                // a[i].a.y += acc.y;
-                
-                // #pragma omp atomic update
-                // a[j].a.x -= acc.x;
-                
-                // #pragma omp atomic update
-                // a[j].a.y -= acc.y;
+                const int t = omp_get_thread_num();
+                accs[t][i] = add(accs[t][i], acc);
+                accs[t][j] = sub(accs[t][j], acc);
             }
         }
 
