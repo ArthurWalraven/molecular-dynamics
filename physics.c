@@ -150,5 +150,6 @@ inline float physics__thermometer(const atom a[], const int n) {
 
     T += (0.5f*avg_momentum - T) / ++N;
 
-    return 119.5f * T;
+
+    return T;
 }
