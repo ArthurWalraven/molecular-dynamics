@@ -30,7 +30,7 @@ $(ODIR)/%.o: %.c
 
 #Link
 $(TARGET): $(OBJS)
-	$(CC) -o $(TARGET) $(OBJS) $(LFLAGS) $(LIBS) $(OFLAGS)
+	$(CC) -o $(TARGET) $(OBJS) $(WFLAGS) $(LFLAGS) $(LIBS) $(OFLAGS)
 
 $(OUTPUT): $(TARGET)
 	$(MAKE) run
@@ -52,11 +52,15 @@ run: $(TARGET)
 run_small: $(TARGET)
 	./$(TARGET) --n=200 --time=1.0 --box-radius=10.0 --avg-speed=1.0 --ups=200.0 --fps=24.0 --resolution=240 --output-file=$(OUTPUT)
 
+time:
+	$(CC) $(SRCS) $(WFLAGS) $(CFLAGS) $(OFLAGS) -DNRENDER -o $(TARGET) $(WFLAGS) $(LFLAGS) $(LIBS) $(CFLAGS)
+	./$(TARGET) --n=1682 --time=100.0 --box-radius=29.0 --avg-speed=1.0 --ups=1000.0 --fps=50.0 --resolution=480 --output-file=$(OUTPUT)
+
 bench: $(PROFDIR)
 	$(CC) $(SRCS) $(WFLAGS) $(CFLAGS) $(DFLAGS) -o $(TARGET) $(WFLAGS) $(DLFLAGS) $(LIBS)
-	valgrind --tool=callgrind --callgrind-out-file=$(PROFDIR)/callgrind.out ./$(TARGET) --n=200 --time=1.0 --box-radius=15.0 --avg-speed=1.0 --ups=1000.0 --fps=50.0 --resolution=100 --output-file=animation.gif
-	callgrind_annotate --auto=yes $(PROFDIR)/callgrind.out > $(PROFDIR)/callgrind.latest.log
-	code $(PROFDIR)/callgrind.latest.log
+	valgrind --tool=callgrind --callgrind-out-file=$(PROFDIR)/latest.out ./$(TARGET) --n=200 --time=1.0 --box-radius=15.0 --avg-speed=1.0 --ups=1000.0 --fps=50.0 --resolution=100 --output-file=animation.gif
+	callgrind_annotate --auto=yes $(PROFDIR)/latest.out > $(PROFDIR)/latest.log
+	code $(PROFDIR)/latest.log
 
 show: $(OUTPUT)
 	code $(OUTPUT)
