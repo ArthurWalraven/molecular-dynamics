@@ -88,11 +88,8 @@ inline void physics__update(atom a[], const int n, const float dt, const float b
             a[i].r.y += a[i].v.y * dt;
             a[i].a.x = 0;
             a[i].a.y = 0;
-        }
 
-        #pragma omp for schedule(static)
-        for (int t = 0; t < THREAD_COUNT; ++t) {
-            for (int i = 0; i < n; ++i) {
+            for (int t = 0; t < THREAD_COUNT; ++t) {
                 accs[t][i] = to_vec(0, 0);
             }
         }
@@ -114,15 +111,12 @@ inline void physics__update(atom a[], const int n, const float dt, const float b
             }
         }
 
-        #pragma omp single
-        for (int t = 0; t < THREAD_COUNT; ++t) {
-            for (int i = 0; i < n; ++i) {
-                a[i].a = add(a[i].a, accs[t][i]);
-            }
-        }
-
         #pragma omp for schedule(static)
         for (int i = 0; i < n; ++i) {
+            for (int t = 0; t < THREAD_COUNT; ++t) {
+                a[i].a = add(a[i].a, accs[t][i]);
+            }
+
             a[i].v.x += 0.5 * a[i].a.x * dt;
             a[i].v.y += 0.5 * a[i].a.y * dt;
 
