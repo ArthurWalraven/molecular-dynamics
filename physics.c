@@ -27,6 +27,20 @@ inline void physics__lattice_populate(atom a[], const int n, const float box_rad
         a[i].a.x = 0;
         a[i].a.y = 0;
     }
+
+    // Zero the average moment
+    vec v_avg = {0, 0};
+    for (int i = 0; i < n; ++i)
+    {
+        v_avg = add(v_avg, a[i].v);
+    }
+    v_avg = mul(v_avg, 1.f/n);
+    printf("Avg moment: (%.2f, %.2f)\n", v_avg.x, v_avg.y);
+    
+    for (int i = 0; i < n; ++i)
+    {
+        a[i].v = sub(a[i].v, v_avg);
+    }
 }
 
 // Insertion sort
