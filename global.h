@@ -5,7 +5,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <time.h>
-#include <sys/resource.h>
 
 
 #define likely(exp)     (__builtin_expect(exp, true))
