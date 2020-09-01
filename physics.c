@@ -76,7 +76,7 @@ inline vec physics__periodic_boundary_shift(vec v, const float box_radius) {
 
 // Velocity verlet
 inline void physics__update(atom a[], const int n, const float dt, const float box_radius) {
-    vec accs[THREAD_COUNT][n];
+    vec accs[THREAD_COUNT][n] __attribute__ ((aligned (64)));
 
     #pragma omp parallel
     {
