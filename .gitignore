@@ -1,11 +1,13 @@
 /.vscode
 /objs
 /exe
+/exe.d
 /frames/*.bmp
 !samples/sample.bmp
 
 animation.gif
+
+/profile
 *.out
 *.out.*
 *.log
-profile
