@@ -36,7 +36,7 @@ $(OUTPUT): $(TARGET)
 	$(MAKE) run
 
 
-.PHONY = all clean bench debug show run run_small
+.PHONY = all clean bench debug show run run_small run_test
 
 all: $(TARGET)
 
@@ -64,3 +64,6 @@ bench: $(PROFDIR)
 
 show: $(OUTPUT)
 	code $(OUTPUT)
+
+run_test: $(TARGET)
+	./$(TARGET) --n=200 --time=10.0 --box-radius=10.0 --avg-speed=0.4 --ups=100.0 --fps=100.0 --resolution=480 --output-file=$(OUTPUT)
