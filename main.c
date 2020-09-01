@@ -60,7 +60,7 @@ int main(const int argc, char * const argv[]) {
             }
 #endif
         }
-        printf("\rupdate: %4d/%d\tframe: %3d/%d\n", params.n_updates, params.n_updates, frame_counter+1, params.n_frames);
+        printf("\rupdate: %4d/%d\tframe: %3d/%d\n", params.n_updates, params.n_updates, frame_counter, params.n_frames);
     )
     //*/
 
