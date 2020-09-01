@@ -1,7 +1,7 @@
 #include "physics.h"
 
 
-inline void physics__lattice_populate(atom a[], const int n, const float box_radius) {
+inline void physics__lattice_populate(atom a[], const int n, const float box_radius, const float energy) {
     assert(box_radius > 0);
     assert(n >= 0);
 
@@ -22,7 +22,7 @@ inline void physics__lattice_populate(atom a[], const int n, const float box_rad
     }
 
     for (int i = 0; i < n; ++i) {
-        a[i].v = normal_vec();
+        a[i].v = mul(normal_vec(), energy);
 
         a[i].a.x = 0;
         a[i].a.y = 0;
@@ -35,7 +35,6 @@ inline void physics__lattice_populate(atom a[], const int n, const float box_rad
         v_avg = add(v_avg, a[i].v);
     }
     v_avg = mul(v_avg, 1.f/n);
-    printf("Avg moment: (%.2f, %.2f)\n", v_avg.x, v_avg.y);
     
     for (int i = 0; i < n; ++i)
     {
