@@ -21,17 +21,18 @@ MSAN = -fsanitize=memory -fsanitize=undefined
 
 
 -include $(DEPS)
+
 -include $(TARGET).d
 
 # Compile
 $(ODIR)/%.o: %.c
-	$(CC) $(WFLAGS) $(CFLAGS) $(OFLAGS) -c $^ -o $@
+	$(CC) $(WFLAGS) $(CFLAGS) $(OFLAGS) -c $< -o $@
 
 #Link
 $(TARGET): $(OBJS)
 	$(CC) -o $(TARGET) $(OBJS) $(LFLAGS) $(LIBS) $(OFLAGS)
 
-$(OUTPUT): $(TARGET) makefile
+$(OUTPUT): $(TARGET)
 	$(MAKE) run
 
 
@@ -46,7 +47,7 @@ debug:
 	$(CC) $(SRCS) $(WFLAGS) $(CFLAGS) $(DFLAGS) -o $(TARGET) $(WFLAGS) $(DLFLAGS) $(LIBS) $(CFLAGS)
 
 run: $(TARGET)
-	./$(TARGET) --n=1682 --time=20.0 --box-radius=29.0 --avg-speed=1.0 --ups=1000.0 --fps=50.0 --resolution=480 --output-file=$(OUTPUT)
+	./$(TARGET) --n=1682 --time=10.0 --box-radius=29.0 --avg-speed=1.0 --ups=1000.0 --fps=50.0 --resolution=480 --output-file=$(OUTPUT)
 
 run_small: $(TARGET)
 	./$(TARGET) --n=200 --time=1.0 --box-radius=10.0 --avg-speed=1.0 --ups=200.0 --fps=24.0 --resolution=240 --output-file=$(OUTPUT)
