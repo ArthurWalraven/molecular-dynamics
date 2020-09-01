@@ -138,7 +138,7 @@ inline void physics__update(atom a[], const int n, const float dt, const float b
     }
 }
 
-inline float physics__thermometer(const atom a[], const int n) {
+float physics__thermometer(const atom a[], const int n) {
     static float T = 0;
     static int N = 0;
     
@@ -152,4 +152,20 @@ inline float physics__thermometer(const atom a[], const int n) {
 
 
     return T;
+}
+
+float physics__barometer(const atom a[], const int n, const float box_radius) {
+    static float P = 0;
+    static int N = 0;
+    
+    float avg_momentum = 0;
+
+    for (int i = 0; i < n; ++i) {
+        avg_momentum += (norm_sq(a[i].v) - avg_momentum)/(i+1);
+    }
+
+    P += ((0.5f * n * avg_momentum / sq(2 * box_radius)) - P) / ++N;
+
+
+    return P;
 }
