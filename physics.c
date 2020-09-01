@@ -138,3 +138,18 @@ inline void physics__update(atom a[], const int n, const float dt, const float b
         }
     }
 }
+
+inline float physics__thermometer(const atom a[], const int n) {
+    static float T = 0;
+    static int N = 0;
+    
+    float avg_momentum = 0;
+
+    for (int i = 0; i < n; ++i) {
+        avg_momentum += (norm_sq(a[i].v) - avg_momentum)/(i+1);
+    }
+
+    T += (0.5f*avg_momentum - T) / ++N;
+
+    return 119.5f * T;
+}
