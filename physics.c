@@ -107,7 +107,7 @@ inline void physics__update(atom a[], const int n, const float dt, const float b
             }
         }
         
-        #pragma omp for schedule(static)
+        #pragma omp for schedule(auto)
         for (int i = 0; i < n-1; ++i) {
             for (int j = i+1; j < n; ++j) {
                 vec dr = sub(a[j].r, a[i].r);
