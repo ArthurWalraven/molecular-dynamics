@@ -49,16 +49,16 @@ int main(const int argc, char * const argv[]) {
 
             physics__update(a, params.n, update_time_step, params.box_radius);
 
-#ifdef DORENDER
             if (((t+1) * update_time_step) - frame_time_tracker >= frame_time_step) {
                 printf("\rT: %7.3f\tP: %7.3f\tupdate: %4d/%d\tframe: %3d/%d", physics__thermometer(a, params.n), physics__barometer(a, params.n, params.box_radius), t+1, params.n_updates, frame_counter, params.n_frames);
 
+#ifdef DORENDER
                 render__frame(a, params.n, params.frame_W, params.frame_H, frames[frame_counter], params.box_radius);
+#endif
 
                 frame_time_tracker += frame_time_step;
                 ++frame_counter;
             }
-#endif
         }
         printf("\rT: %7.3f\tP: %7.3f\tupdate: %4d/%d\tframe: %3d/%d\n", physics__thermometer(a, params.n), physics__barometer(a, params.n, params.box_radius), params.n_updates, params.n_updates, frame_counter, params.n_frames);
     )
