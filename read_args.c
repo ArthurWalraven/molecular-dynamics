@@ -86,12 +86,13 @@ Params process_arguments(const int argc, char * const argv[]) {
                     ,
                     argv[0]
                     ,"-h, --help", "Show this message"
-                    ,"-o, --output-file=<filename>", "Output animation of the simulation to file <filename>" "(default: 'animation.gif')"
-                    ,"-n, --n=<value>", "Simulate <value> balls" "(default: 10)"
-                    ,"-t, --time=<value>", "Simulate <value> seconds" "(default: 5.0)"
+                    ,"-o, --output-file=<filename>", "Output animation of the simulation to file <filename>" " (default: 'animation.gif')"
+                    ,"-n, --n=<value>", "Simulate <value> balls" " (default: 10)"
+                    ,"-t, --time=<value>", "Simulate <value> seconds" " (default: 5.0)"
+                    ,"--box-radius=<value>", "Run the simulation inside of a square box with radius of <value> units of length" " (default: 10.0)"
                     // ,"--avg-speed=<value>", "Initilize balls' velocity radomly with average magnitude of <value> m/s" "(default: 20.0)"
-                    ,"--resolution=<value>", "Generate frames with <value>x<value> pixels" "(default: 100)"
-                    ,"--fps=<value>", "Generate animation with (approximately) <value> frames per second" "(default: 50.0)"
+                    ,"--resolution=<value>", "Generate frames with <value>x<value> pixels" " (default: 100)"
+                    ,"--fps=<value>", "Generate animation with (approximately) <value> frames per second" " (default: 50.0)"
                     ,"--ups=<value>", "Run physics calculations <value> times per second" " (default: 1000.0)"
                 );
                 if (ch == 'h') {
