@@ -1,167 +1,171 @@
 #include "physics.h"
 
 
-inline float gravity(const vec a, const vec b) {
-    const float G = 6.67408e-11 * 1e1;
-    return G / dist_sq(b, a);
-}
+inline void physics__lattice_populate(atom a[], const int n, const float box_radius, const float energy) {
+    assert(box_radius > 0);
+    assert(n >= 0);
 
-inline float physics__max_radius(const ball b[], const int n) {
-    float max_r = 0;
+    const int m = (int) roundf(sqrtf(n/2));
+    assert(2 * sq(m) == n  && "'n / 2' needs to be a perfect square");
+
+    const float lattice_step = 2 * box_radius / (m - 0);
+
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < m; ++j) {
+            a[(i * m) + j].r.x = -box_radius + j * lattice_step;
+            a[(i * m) + j].r.y = -box_radius + i * lattice_step;
+        }
+        for (int j = 0; j < m; ++j) {
+            a[sq(m) + (i * m) + j].r.x = -box_radius + (j + 0.5f) * lattice_step;
+            a[sq(m) + (i * m) + j].r.y = -box_radius + (i + 0.5f) * lattice_step;
+        }
+    }
 
     for (int i = 0; i < n; ++i) {
-        max_r = fmaxf(max_r, b[i].r);
+        a[i].v = mul(normal_vec(), energy);
+
+        a[i].a.x = 0;
+        a[i].a.y = 0;
     }
+
+    // Zero the average moment
+    vec v_avg = {0, 0};
+    for (int i = 0; i < n; ++i)
+    {
+        v_avg = add(v_avg, a[i].v);
+    }
+    v_avg = mul(v_avg, 1.f/n);
     
-    return max_r;
+    for (int i = 0; i < n; ++i)
+    {
+        a[i].v = sub(a[i].v, v_avg);
+    }
 }
 
-static inline void sort_by_Y(ball b[], const int n) {
+// Insertion sort
+inline void physics__sort_by_Y(atom a[], const int n) {
     for (int i = 1; i < n; ++i) {
-        if_unlikely (b[i].p.y > b[i-1].p.y) {
+        if unlikely(a[i].r.y > a[i-1].r.y) {
             int j = i-2;
-            while ((j >= 0) && (b[j].p.y <= b[i].p.y)) {
+            while ((j >= 0) && (a[j].r.y <= a[i].r.y)) {
                 --j;
             }
 
-            const ball temp = b[i];
+            const atom temp = a[i];
             
-            memmove(&b[j+2], &b[j+1], (i - (j+1)) * sizeof(*b));
-            b[j+1] = temp;
+            memmove(&a[j+2], &a[j+1], (i - (j+1)) * sizeof(*a));
+            a[j+1] = temp;
         }
     }
 
     TEST(
         for (int i = 1; i < n; ++i) {
-            assert(b[i-1].p.y >= b[i].p.y);
-            assert(memcmp(&b[i-1], &b[i], sizeof(b[i])) && "This is very likely an error");
+            assert(a[i-1].r.y >= a[i].r.y);
+            assert(memcmp(&a[i-1], &a[i], sizeof(a[i])) && "This is very likely an error");
         }
     )
 }
 
-__always_inline
-static void adjust_for_collision(ball * a, ball * b) {
-    const vec p = sub(b->p, a->p);
+// Periodic Boundary Condition
+inline vec physics__periodic_boundary_shift(vec v, const float box_radius) {
+    if unlikely(norm_max(v) > box_radius) {
+        if unlikely(v.x > box_radius) {
+            v.x -= 2 * box_radius;
+        }
+        else if (v.x < -box_radius) {
+            v.x += 2 * box_radius;
+        }
 
-    const vec v = sub(a->v, b->v);
-    const float v_len = norm(v);
-    const vec v_n = divide(v, v_len);
+        if unlikely(v.y > box_radius) {
+            v.y -= 2 * box_radius;
+        }
+        else if (v.y < -box_radius) {
+            v.y += 2 * box_radius;
+        }
+    }
 
-    const vec pPv = mul(v_n, dot(p, v_n));
-
-    const float h_sq = norm_sq(p) - norm_sq(pPv);
-    const float l = sqrtf(sq(a->r + b->r) - h_sq);
-
-    const float time_since_collision = (l - norm(pPv)) / v_len;
-
-    a->p.x -= a->v.x * time_since_collision;
-    a->p.y -= a->v.y * time_since_collision;
-    b->p.x -= b->v.x * time_since_collision;
-    b->p.y -= b->v.y * time_since_collision;
-
-    // const vec q_n = divide(sub(b->p, a->p), norm(sub(b->p, a->p)));
-    const vec q_n = normalize(sub(b->p, a->p));   // Faster
-
-    const vec proj_A = mul(q_n, dot(sub(a->v, b->v), q_n));
-    const vec proj_B = mul(q_n, dot(sub(b->v, a->v), q_n));
-    a->v = sub(a->v, proj_A);
-    b->v = sub(b->v, proj_B);
-
-    a->p.x += a->v.x * time_since_collision;
-    a->p.y += a->v.y * time_since_collision;
-    b->p.x += b->v.x * time_since_collision;
-    b->p.y += b->v.y * time_since_collision;
+    return v;
 }
 
-inline void physics__random_populate(ball b[], const int n, const float box_radius, const float avg_speed) {
-    assert(n >= 0);
-    assert(box_radius > 0);
+// Velocity verlet
+inline void physics__update(atom a[], const int n, const float dt, const float box_radius) {
+    vec accs[THREAD_COUNT][n] __attribute__ ((aligned (64)));
 
-    const float speed_range = 2 * avg_speed / sqrtf(2);
-
-    for (int i = 0; i < n; ++i) {
-        b[i].p.x = (2 * randf() - 1) * box_radius;
-        b[i].p.y = (2 * randf() - 1) * box_radius;
-        b[i].v.x = (2 * randf() - 1) * speed_range;
-        b[i].v.y = (2 * randf() - 1) * speed_range;
-        b[i].r = 1 * 1e3;
-    }
-    // TODO: Balls could be inside one another
-
-    sort_by_Y(b, n);
-
-    TEST(
+    #pragma omp parallel
+    {
+        #pragma omp for schedule(static)
         for (int i = 0; i < n; ++i) {
-            assert(b[i].r > EPS);
+            a[i].v.x += 0.5 * a[i].a.x * dt;
+            a[i].v.y += 0.5 * a[i].a.y * dt;
+            a[i].r.x += a[i].v.x * dt;
+            a[i].r.y += a[i].v.y * dt;
+            a[i].a.x = 0;
+            a[i].a.y = 0;
+
+            for (int t = 0; t < THREAD_COUNT; ++t) {
+                accs[t][i] = to_vec(0, 0);
+            }
         }
-    )
+        
+        #pragma omp for schedule(auto)
+        for (int i = 0; i < n-1; ++i) {
+            for (int j = i+1; j < n; ++j) {
+                vec dr = sub(a[j].r, a[i].r);
+                dr = physics__periodic_boundary_shift(dr, box_radius);
+
+                const float recip_drdr = 1/dot(dr, dr);
+
+                // Gradient of the Lennard-Jones potential
+                const vec acc = mul(dr, -24 * recip_drdr * ( 2 * powf(recip_drdr, 6) - powf(recip_drdr, 3)));
+
+                const int t = omp_get_thread_num();
+                accs[t][i] = add(accs[t][i], acc);
+                accs[t][j] = sub(accs[t][j], acc);
+            }
+        }
+
+        #pragma omp for schedule(static)
+        for (int i = 0; i < n; ++i) {
+            for (int t = 0; t < THREAD_COUNT; ++t) {
+                a[i].a = add(a[i].a, accs[t][i]);
+            }
+
+            a[i].v.x += 0.5 * a[i].a.x * dt;
+            a[i].v.y += 0.5 * a[i].a.y * dt;
+
+            a[i].r = physics__periodic_boundary_shift(a[i].r, box_radius);
+        }
+    }
 }
 
-inline void physics__update(ball b[], const int n, const float box_radius, const float ellapsed_time) {
-    //* Update positions
+float physics__thermometer(const atom a[], const int n) {
+    static float T = 0;
+    static int N = 0;
+    
+    float avg_momentum = 0;
+
     for (int i = 0; i < n; ++i) {
-        b[i].p.x += b[i].v.x * ellapsed_time;
-        b[i].p.y += b[i].v.y * ellapsed_time;
+        avg_momentum += (norm_sq(a[i].v) - avg_momentum)/(i+1);
     }
-    //*/
 
-    //* Ball-ball collision
-    for (int i = 0; i < n-1; ++i) {
-        for (int j = i+1; j < n; ++j) {
-            if_unlikely(dist_sq(b[i].p, b[j].p) < sq(b[i].r + b[j].r)) {
-                const float scale_factor = 1.0 / ((double) (b[i].r + b[j].r) - (double) norm(sub(b[j].p, b[i].p)));
-                
-                ball A = {
-                    .p = mul(b[i].p, scale_factor),
-                    .v = mul(b[i].v, scale_factor),
-                    .r = b[i].r * scale_factor
-                };
-                ball B = {
-                    .p = mul(b[j].p, scale_factor),
-                    .v = mul(b[j].v, scale_factor),
-                    .r = b[j].r * scale_factor
-                };
+    T += (0.5f*avg_momentum - T) / ++N;
 
-                adjust_for_collision(&A, &B);
 
-                const float reciprocal_scale_factor = 1.0 / scale_factor;
+    return T;
+}
 
-                b[i].p = mul(A.p, reciprocal_scale_factor);
-                b[i].v = mul(A.v, reciprocal_scale_factor);
+float physics__barometer(const atom a[], const int n, const float box_radius) {
+    static float P = 0;
+    static int N = 0;
+    
+    float avg_momentum = 0;
 
-                b[j].p = mul(B.p, reciprocal_scale_factor);
-                b[j].v = mul(B.v, reciprocal_scale_factor);
-            }
-        }
-    }
-    //*/
-
-    //* Ball-box collision
     for (int i = 0; i < n; ++i) {
-        if_unlikely(norm_max(b[i].p) > (box_radius - b[i].r)) {
-            // Horizontal collisions
-            if_unlikely(b[i].p.x > (box_radius - b[i].r)) {
-                b[i].v.x *= -1;
-                b[i].p.x = -b[i].p.x + 2 * (box_radius - b[i].r);
-            }
-            else if_unlikely(b[i].p.x < -(box_radius - b[i].r)) {
-                b[i].v.x *= -1;
-                b[i].p.x = -b[i].p.x + 2 * -(box_radius - b[i].r);
-            }
-
-            // Vertical collisions
-            if_unlikely(b[i].p.y > (box_radius - b[i].r)) {
-                b[i].v.y *= -1;
-                b[i].p.y = -b[i].p.y + 2 * (box_radius - b[i].r);
-            }
-            else if_unlikely(b[i].p.y < -(box_radius - b[i].r)) {
-                b[i].v.y *= -1;
-                b[i].p.y = -b[i].p.y + 2 * -(box_radius - b[i].r);
-            }
-        }
+        avg_momentum += (norm_sq(a[i].v) - avg_momentum)/(i+1);
     }
-    //*/
 
-    // Keep balls sorted
-    sort_by_Y(b, n);
+    P += ((0.5f * n * avg_momentum / sq(2 * box_radius)) - P) / ++N;
+
+
+    return P;
 }

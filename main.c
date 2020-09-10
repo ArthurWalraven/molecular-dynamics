@@ -5,13 +5,26 @@
 #include "read_args.h"
 #include "physics.h"
 #include "render.h"
+#include "random.h"
 
+
+// To help IDE highlighting
 #ifndef NRENDER
 #define DORENDER
 #endif
 
 
 int main(const int argc, char * const argv[]) {
+#ifndef NDEBUG
+    puts("Running in DEBUG mode");
+#endif
+
+    // Tests
+    TEST(
+        test_random();
+    )
+
+
     const Params params = process_arguments(argc, argv);
 
 #ifdef DORENDER
@@ -25,32 +38,29 @@ int main(const int argc, char * const argv[]) {
 
     //* Simulation
     BENCH("Simulation",
-        ball b[params.n];
-        physics__random_populate(b, params.n, params.box_radius, params.avg_speed);
-        const float max_r = physics__max_radius(b, params.n);
+        atom a[params.n];
+        physics__lattice_populate(a, params.n, params.box_radius, params.avg_speed);
         
         int frame_counter = 0;
         float frame_time_tracker = 0;
         for (int t = 0; t < params.n_updates; ++t) {
-            printf("\rupdate: %4d/%d\tframe: %3d/%d", t+1, params.n_updates, frame_counter+1, params.n_frames);
-            fflush(stdin);
-
             const float update_time_step = params.simulation_time / params.n_updates;
             const float frame_time_step = params.simulation_time / params.n_frames;
 
-            physics__update(b, params.n, params.box_radius, update_time_step);
+            physics__update(a, params.n, update_time_step, params.box_radius);
+
+            if (((t+1) * update_time_step) - frame_time_tracker >= frame_time_step) {
+                printf("\rT: %7.3f\tP: %7.3f\tupdate: %4d/%d\tframe: %3d/%d", physics__thermometer(a, params.n), physics__barometer(a, params.n, params.box_radius), t+1, params.n_updates, frame_counter, params.n_frames);
 
 #ifdef DORENDER
-            if (((t+1) * update_time_step) - frame_time_tracker >= frame_time_step) {
-
-                render__frame(b, params.n, max_r, params.frame_W, params.frame_H, frames[frame_counter], params.box_radius);
+                render__frame(a, params.n, params.frame_W, params.frame_H, frames[frame_counter], params.box_radius);
+#endif
 
                 frame_time_tracker += frame_time_step;
                 ++frame_counter;
             }
-#endif
         }
-        putchar('\n');
+        printf("\rT: %7.3f\tP: %7.3f\tupdate: %4d/%d\tframe: %3d/%d\n", physics__thermometer(a, params.n), physics__barometer(a, params.n, params.box_radius), params.n_updates, params.n_updates, frame_counter, params.n_frames);
     )
     //*/
 

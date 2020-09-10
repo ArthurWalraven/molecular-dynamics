@@ -4,11 +4,11 @@ Params process_arguments(const int argc, char * const argv[]) {
     Params parameters = {
         .n = 10,
         .simulation_time = 5.0,
-        .box_radius = 10.0 * 1e3,
+        .box_radius = 10.0,
         .ups = 1000.0,
         .fps = 50.0,
         .resolution = 100,
-        .avg_speed = 20.0 * 1e3,
+        .avg_speed = 20.0,
         .output_filename = "animation.gif"
     };
 
@@ -42,12 +42,10 @@ Params process_arguments(const int argc, char * const argv[]) {
             
             case 'b':
                 items_read = sscanf(optarg, " %f", &parameters.box_radius);
-                parameters.box_radius *= 1e3;
                 break;
             
             case 's':
                 items_read = sscanf(optarg, " %f", &parameters.avg_speed);
-                parameters.avg_speed *= 1e3;
                 break;
             
             case 'u':
@@ -70,7 +68,7 @@ Params process_arguments(const int argc, char * const argv[]) {
             case '?':
             default:
                 items_read = 0;
-                // Roll over
+                // fall through
 
             case 'h':
                 fprintf(stderr,
@@ -84,17 +82,17 @@ Params process_arguments(const int argc, char * const argv[]) {
                     "%-24s\t%s\n"
                     "%-24s\t%s\n"
                     "%-24s\t%s\n"
-                    "%-24s\t%s\n"
+                    // "%-24s\t%s\n"
                     ,
                     argv[0]
                     ,"-h, --help", "Show this message"
-                    ,"-o, --output-file=<filename>", "Output animation of the simulation to file <filename>" "(default: 'animation.gif')"
-                    ,"-n, --n=<value>", "Simulate <value> balls" "(default: 10)"
-                    ,"-t, --time=<value>", "Simulate <value> seconds" "(default: 5.0)"
-                    ,"--box-radius=<value>", "Run the simulation inside of a square box with radius of <value> meters" "(default: 10.0)"
-                    ,"--avg-speed=<value>", "Initilize balls' velocity radomly with average magnitude of <value> m/s" "(default: 20.0)"
-                    ,"--resolution=<value>", "Generate frames with <value>x<value> pixels" "(default: 100)"
-                    ,"--fps=<value>", "Generate animation with (approximately) <value> frames per second" "(default: 50.0)"
+                    ,"-o, --output-file=<filename>", "Output animation of the simulation to file <filename>" " (default: 'animation.gif')"
+                    ,"-n, --n=<value>", "Simulate <value> balls" " (default: 10)"
+                    ,"-t, --time=<value>", "Simulate <value> seconds" " (default: 5.0)"
+                    ,"--box-radius=<value>", "Run the simulation inside of a square box with radius of <value> units of length" " (default: 10.0)"
+                    // ,"--avg-speed=<value>", "Initilize balls' velocity radomly with average magnitude of <value> m/s" "(default: 20.0)"
+                    ,"--resolution=<value>", "Generate frames with <value>x<value> pixels" " (default: 100)"
+                    ,"--fps=<value>", "Generate animation with (approximately) <value> frames per second" " (default: 50.0)"
                     ,"--ups=<value>", "Run physics calculations <value> times per second" " (default: 1000.0)"
                 );
                 if (ch == 'h') {
@@ -130,7 +128,7 @@ Params process_arguments(const int argc, char * const argv[]) {
 
     parameters.frame_W = parameters.resolution;
     parameters.frame_H = parameters.resolution;
-    parameters.n_frames = ceilf(parameters.simulation_time * parameters.fps);   // TODO: Make sure this is right
+    parameters.n_frames = ceilf(parameters.simulation_time * parameters.fps);  // TODO: Make sure this is right
     parameters.n_updates = floorf(parameters.simulation_time * parameters.ups); // TODO: Make sure this is right
 
     return parameters;

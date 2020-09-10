@@ -4,18 +4,23 @@
 #include <stdbool.h>
 #include <string.h>
 #include <assert.h>
+#include <omp.h>
 
 #include "global.h"
 #include "vec.h"
+#include "random.h"
 
 
 typedef struct {
-    vec p;
+    vec r;
     vec v;
-    float r;
-} ball;
+    vec a;
+} atom;
 
 
-void physics__random_populate(ball b[], const int n, const float box_radius, const float avg_speed);
-float physics__max_radius(const ball b[], const int n);
-void physics__update(ball b[], const int n, const float box_radius, const float ellapsed_time);
+void physics__lattice_populate(atom a[], const int n, const float box_radius, const float energy);
+void physics__update(atom a[], const int n, const float dt, const float box_radius);
+void physics__sort_by_Y(atom a[], const int n);
+vec physics__periodic_boundary_shift(vec v, const float box_radius);
+float physics__thermometer(const atom a[], const int n);
+float physics__barometer(const atom a[], const int n, const float box_radius);

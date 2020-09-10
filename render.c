@@ -1,12 +1,6 @@
 #include "render.h"
 
 
-#define ANTIALIASING_MARGIN (0.1f * 1e3f)
-
-#define FRAMES_DIRECTORY_PATH "frames/"
-#define FRAME_FILE_NAME_PREFIX  FRAMES_DIRECTORY_PATH "frame_"
-
-
 #if BYTE_ORDER == BIG_ENDIAN
 #define to_little_endian16(x)   __builtin_bswap16((uint16_t) (x))
 #else
@@ -14,10 +8,21 @@
 #endif
 
 
-static inline float distance_to_ball(const vec v, const vec c, const float r) {
-    return fminf(1, fmaxf(0,
-            (-dist_sq(c, v) + sq(r))/(sq(ANTIALIASING_MARGIN) + 2*r*ANTIALIASING_MARGIN) + 1
-        ));
+#define FRAMES_DIRECTORY_PATH "frames/"
+#define FRAME_FILE_NAME_PREFIX  FRAMES_DIRECTORY_PATH "frame_"
+
+#define WITCH_CONSTANT  6.f
+#define RENDER_RADIUS   (15.93738f / WITCH_CONSTANT)
+
+// See https://en.wikipedia.org/wiki/Witch_of_Agnesi
+static inline float witch_of_Agnesi(const vec v) {
+    return 1/(1 + sq(WITCH_CONSTANT) * norm_sq(v));
+}
+
+static inline void colour_pixel(uint8_t * restrict p, const vec r) {
+    if unlikely(norm_sq(r) < RENDER_RADIUS) {
+        *p = (uint8_t) fminf(127.f, *p + 127.f * witch_of_Agnesi(r));
+    }
 }
 
 static void to_BMP(const int W, const int H, const uint8_t canvas[][W]) {
@@ -269,7 +274,9 @@ static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][
 }
 
 
-void render__frame(const ball b[], const int n, const float max_r, const int W, const int H, uint8_t frame[][W], const float box_radius) {
+void render__frame(atom a[], const int n, const int W, const int H, uint8_t frame[][W], const float box_radius) {
+    physics__sort_by_Y(a, n);
+
     const vec canvas_origin = {
         .x = W / 2.f,
         .y = H / 2.f
@@ -277,16 +284,14 @@ void render__frame(const ball b[], const int n, const float max_r, const int W, 
 
     int s = 0;
     int t = 0;
-    #pragma omp parallel for firstprivate(s, t) schedule(static)
+    #pragma omp parallel for schedule(static) firstprivate(s, t)
     for (int i = 0; i < H; ++i) {
         vec v = {.y = -(i - canvas_origin.y) * box_radius / (W / 2.f)};
 
-        while ((s < n) && (b[s].p.y - (1.2f * max_r) > v.y))
-        {
+        while ((s < n) && (a[s].r.y - RENDER_RADIUS > v.y)) {
             ++s;
         }
-        while ((t < n) && (b[t].p.y + (1.2f * max_r) > v.y))
-        {
+        while ((t < n) && (a[t].r.y + RENDER_RADIUS > v.y)) {
             ++t;
         }
 
@@ -294,11 +299,35 @@ void render__frame(const ball b[], const int n, const float max_r, const int W, 
             v.x = (j - canvas_origin.x) * box_radius / (W / 2.f);
 
             for (int k = s; k < t; ++k) {
-#ifdef NANTIALIAS
-                frame[i][j] = (uint8_t) fminf(127, frame[i][j] + 127 * (dist_sq(v, b[k].p) <= sq(b[k].r)));
-#else
-                frame[i][j] = (uint8_t) roundf(fminf(127.f, frame[i][j] + 127.f * distance_to_ball(v, b[k].p, b[k].r)));
-#endif
+                vec r = sub(v, a[k].r);
+                r = physics__periodic_boundary_shift(r, box_radius);
+
+                colour_pixel(&frame[i][j], r);
+            }
+
+            if unlikely(v.y > box_radius - RENDER_RADIUS) {
+                for (int k = n-1; k >= 0; --k) {
+                    if (a[k].r.y + 2 * box_radius - RENDER_RADIUS > v.y) {
+                        break;
+                    }
+
+                    vec r = sub(v, to_vec(a[k].r.x, a[k].r.y + 2 * box_radius));
+                    r = physics__periodic_boundary_shift(r, box_radius);
+
+                    colour_pixel(&frame[i][j], r);
+                }
+            }
+            else if unlikely(v.y < -box_radius + RENDER_RADIUS) {
+                for (int k = 0; k < n; ++k) {
+                    if (a[k].r.y - 2 * box_radius + RENDER_RADIUS < v.y) {
+                        break;
+                    }
+
+                    vec r = sub(v, to_vec(a[k].r.x, a[k].r.y - 2 * box_radius));
+                    r = physics__periodic_boundary_shift(r, box_radius);
+
+                    colour_pixel(&frame[i][j], r);
+                }
             }
         }
     }

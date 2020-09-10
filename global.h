@@ -5,11 +5,11 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <time.h>
-#include <sys/resource.h>
 
 
-#define if_likely(exp)      if (__builtin_expect(exp, true))
-#define if_unlikely(exp)    if (__builtin_expect(exp, false))
+#define likely(exp)     (__builtin_expect(exp, true))
+#define unlikely(exp)	(__builtin_expect(exp, false))
+// #define with_probability(p, exp)	(__builtin_expect_with_probability(exp, true, p))
 
 #define sq(a)   ((a) * (a))
 
@@ -18,6 +18,9 @@
 
 #define LOG(format, exp)	printf("%s:" STRINGFY(__LINE__) ": " #exp " = " format "\n", __func__, (exp))
 
+#ifdef NBENCH
+#define BENCH(str, exp)	exp
+#else
 #define BENCH(str, exp)	{\
 	puts(!(str[0]) ? "\nStart" : "\nStart: " str);\
 \
@@ -39,25 +42,11 @@
 		(real_time_end.tv_sec - real_time_start.tv_sec)\
 		+ (real_time_end.tv_nsec - real_time_start.tv_nsec)/1e9);\
 }
-
-#ifdef NDEBUG
-#define TEST(exp) (void) (0);
-#else
-#define TEST(exp) {exp}
 #endif
 
-__always_inline
-uint64_t rand_fast() {
-	extern uint64_t state;
-	
-	state ^= state << 13;
-	state ^= state >> 17;
-	state ^= state << 5;
-
-	return state;
-}
-
-__always_inline
-float randf() {
-	return (float) rand_fast() / UINT64_MAX;
-}
+#ifdef NTEST
+#define TEST(exp) (void) (0);
+#else
+#define NDEBUG
+#define TEST(exp) {exp}
+#endif
