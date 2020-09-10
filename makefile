@@ -49,6 +49,11 @@ debug:
 run: $(TARGET)
 	./$(TARGET) --n=1682 --time=10.0 --box-radius=29.0 --avg-speed=1.0 --ups=1000.0 --fps=50.0 --resolution=480 --output-file=$(OUTPUT)
 
+sample: $(TARGET)
+	./$(TARGET) --n=968 --time=10.0 --box-radius=16.0 --avg-speed=1.6 --ups=400.0 --fps=50.0 --resolution=360 --output-file=$(OUTPUT)
+	convert $(OUTPUT) samples/sample.gif
+	ls -lah samples/sample.gif
+
 run_small: $(TARGET)
 	./$(TARGET) --n=200 --time=1.0 --box-radius=10.0 --avg-speed=1.0 --ups=200.0 --fps=24.0 --resolution=240 --output-file=$(OUTPUT)
 
