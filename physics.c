@@ -159,7 +159,11 @@ inline void physics__update(atom a[], const int n, const float dt, const float b
             a[i].v.x += 0.5 * a[i].a.x * dt;
             a[i].v.y += 0.5 * a[i].a.y * dt;
 
+#ifdef PBC
             a[i].r = physics__periodic_boundary_shift(a[i].r, box_radius);
+#else
+            a[i] = wall_bounce(a[i], box_radius);
+#endif
         }
     }
 }
