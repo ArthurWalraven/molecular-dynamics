@@ -87,6 +87,32 @@ inline vec physics__periodic_boundary_shift(vec v, const float box_radius) {
     return v;
 }
 
+static inline atom wall_bounce(atom a, const float box_radius) {
+    if unlikely(norm_max(a.r) > box_radius) {
+        // Horizontal collisions
+        if unlikely(a.r.x > box_radius) {
+            a.v.x *= -1;
+            a.r.x = -a.r.x + 2 * box_radius;
+        }
+        else if likely(a.r.x < -box_radius) {
+            a.v.x *= -1;
+            a.r.x = -a.r.x - 2 * box_radius;
+        }
+
+        // Vertical collisions
+        if unlikely(a.r.y > box_radius) {
+            a.v.y *= -1;
+            a.r.y = -a.r.y + 2 * box_radius;
+        }
+        else if likely(a.r.y < -box_radius) {
+            a.v.y *= -1;
+            a.r.y = -a.r.y + 2 * -box_radius;
+        }
+    }
+
+    return a;
+}
+
 // Velocity verlet
 inline void physics__update(atom a[], const int n, const float dt, const float box_radius) {
     vec accs[THREAD_COUNT][n] __attribute__ ((aligned (64)));
@@ -133,7 +159,11 @@ inline void physics__update(atom a[], const int n, const float dt, const float b
             a[i].v.x += 0.5 * a[i].a.x * dt;
             a[i].v.y += 0.5 * a[i].a.y * dt;
 
+#ifdef PBC
             a[i].r = physics__periodic_boundary_shift(a[i].r, box_radius);
+#else
+            a[i] = wall_bounce(a[i], box_radius);
+#endif
         }
     }
 }

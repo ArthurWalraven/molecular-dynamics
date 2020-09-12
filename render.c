@@ -300,11 +300,15 @@ void render__frame(atom a[], const int n, const int W, const int H, uint8_t fram
 
             for (int k = s; k < t; ++k) {
                 vec r = sub(v, a[k].r);
+
+#ifdef PBC
                 r = physics__periodic_boundary_shift(r, box_radius);
+#endif
 
                 colour_pixel(&frame[i][j], r);
             }
 
+#ifdef PBC
             if unlikely(v.y > box_radius - RENDER_RADIUS) {
                 for (int k = n-1; k >= 0; --k) {
                     if (a[k].r.y + 2 * box_radius - RENDER_RADIUS > v.y) {
@@ -329,6 +333,7 @@ void render__frame(atom a[], const int n, const int W, const int H, uint8_t fram
                     colour_pixel(&frame[i][j], r);
                 }
             }
+#endif
         }
     }
 }
