@@ -19,12 +19,6 @@ int main(const int argc, char * const argv[]) {
     puts("Running in DEBUG mode");
 #endif
 
-    // Tests
-    TEST(
-        test_random();
-    )
-
-
     const Params params = process_arguments(argc, argv);
 
 #ifdef DORENDER
