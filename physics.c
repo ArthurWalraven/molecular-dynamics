@@ -43,7 +43,7 @@ inline void physics__lattice_populate(atom a[], const int n, const float box_rad
 }
 
 // Insertion sort
-inline void physics__sort_by_Y(atom a[], const int n) {
+void physics__sort_by_Y(atom a[], const int n) {
     for (int i = 1; i < n; ++i) {
         if unlikely(a[i].r.y > a[i-1].r.y) {
             int j = i-2;
