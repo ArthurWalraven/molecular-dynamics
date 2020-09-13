@@ -24,7 +24,7 @@ int main(const int argc, char * const argv[]) {
     atom a[params.n];
     physics__lattice_populate(a, params.n, params.box_radius, params.avg_speed);
 
-    vec positions[params.n_frames][params.n];
+    vec r_snapsshots[params.n_frames][params.n];
     
     //* Simulation
     BENCH("Simulation",
@@ -41,7 +41,7 @@ int main(const int argc, char * const argv[]) {
 
                 physics__sort_by_Y(a, params.n);
                 for (int i = 0; i < params.n; ++i) {
-                    positions[frame_counter][i] = a[i].r;
+                    r_snapsshots[frame_counter][i] = a[i].r;
                 }
 
                 frame_time_tracker += frame_time_step;
@@ -61,7 +61,7 @@ int main(const int argc, char * const argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    render__frames(params.n, positions, params.n_frames, params.frame_W, params.frame_H, frames, params.box_radius);
+    render__frames(params.n, r_snapsshots, params.n_frames, params.frame_W, params.frame_H, frames, params.box_radius);
 
     render__animation(params.frame_W, params.frame_H, params.n_frames, frames, params.fps, params.output_filename);
 
