@@ -15,9 +15,9 @@ OFLAGS = -O3 -DNTEST -DNDEBUG -fopenmp # -DNRENDER -DNBENCH
 DFLAGS = -O2 -g3 -fno-omit-frame-pointer -DNTEST
 DLFLAGS = $(DFLAGS) -fno-pic -no-pie
 
-TSAN = -fsanitize=thread -fsanitize=undefined
 ASAN = -fsanitize=address -fsanitize=leak -fsanitize=undefined
 MSAN = -fsanitize=memory -fsanitize=undefined
+TSAN = -fsanitize=thread -fsanitize=undefined
 
 
 -include $(DEPS)
@@ -45,6 +45,15 @@ clean:
 
 debug:
 	$(CC) $(SRCS) $(WFLAGS) $(CFLAGS) $(DFLAGS) -o $(TARGET) $(WFLAGS) $(DLFLAGS) $(LIBS) $(CFLAGS)
+
+build_asan:
+	$(CC) $(SRCS) $(WFLAGS) $(CFLAGS) $(DFLAGS) $(ASAN) -o $(TARGET) $(WFLAGS) $(DLFLAGS) $(LIBS) $(CFLAGS)
+
+build_msan:
+	$(CC) $(SRCS) $(WFLAGS) $(CFLAGS) $(DFLAGS) $(MSAN) -o $(TARGET) $(WFLAGS) $(DLFLAGS) $(LIBS) $(CFLAGS)
+
+build_tsan:
+	$(CC) $(SRCS) $(WFLAGS) $(CFLAGS) $(DFLAGS) $(TSAN) -o $(TARGET) $(WFLAGS) $(DLFLAGS) $(LIBS) $(CFLAGS)
 
 run: $(TARGET)
 	./$(TARGET) --n=1682 --time=10.0 --box-radius=29.0 --avg-speed=1.0 --ups=1000.0 --fps=50.0 --resolution=480 --output-file=$(OUTPUT)
