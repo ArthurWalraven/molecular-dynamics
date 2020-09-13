@@ -16,7 +16,7 @@
 
 int main(const int argc, char * const argv[]) {
 #ifndef NDEBUG
-    puts("Running in DEBUG mode");
+    puts("Built in DEBUG mode.");
 #endif
 
     const Params params = process_arguments(argc, argv);
@@ -46,7 +46,7 @@ int main(const int argc, char * const argv[]) {
                 }
             }
         }
-        printf("\rT: %7.3f\tP: %7.3f\tupdate: %4d/%d\tsnapshot: %3d/%d\n", physics__thermometer(a, params.n), physics__barometer(a, params.n, params.box_radius), params.n_updates, params.n_updates, frame_counter+1, params.n_frames);
+        putchar('\n');
     )
     //*/
 
@@ -56,7 +56,7 @@ int main(const int argc, char * const argv[]) {
         printf("Allocating animation buffer: [%d] %dx%d GIF (pixel stream of %.2f MiB)\n", params.n_frames, params.frame_W, params.frame_H, (params.n_frames * params.frame_H * params.frame_W) / 0x1p20f);
         uint8_t (*frames)[params.frame_H][params.frame_W] = calloc(params.n_frames * params.frame_H * params.frame_W, sizeof(frames[0][0][0]));
         if (!frames) {
-            perror("Error on buffer creation");
+            perror("Error on animation buffer creation");
             exit(EXIT_FAILURE);
         }
 
