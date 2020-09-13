@@ -80,4 +80,4 @@ show: $(OUTPUT)
 	code $(OUTPUT)
 
 run_test: $(TARGET)
-	./$(TARGET) --n=32 --time=30.0 --box-radius=10.0 --avg-speed=0.6 --ups=100.0 --fps=50.0 --resolution=480 --output-file=$(OUTPUT)
+	./$(TARGET) --n=968 --time=30.0 --box-radius=20.0 --avg-speed=0.6 --ups=100.0 --fps=50.0 --resolution=300 --output-file=$(OUTPUT)
