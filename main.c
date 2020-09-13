@@ -24,7 +24,11 @@ int main(const int argc, char * const argv[]) {
     atom a[params.n];
     physics__lattice_populate(a, params.n, params.box_radius, params.avg_speed);
 
-    vec r_snapsshots[params.n_frames][params.n];
+    vec (*r_snapshots)[params.n] = malloc(params.n_frames * params.n * sizeof(r_snapshots[0][0]));
+    if (!r_snapshots) {
+        perror("Error on position snapshot buffer creation");
+        exit(EXIT_FAILURE);
+    }
     
     //* Simulation
     BENCH("Simulation",
@@ -42,7 +46,7 @@ int main(const int argc, char * const argv[]) {
 
                 physics__sort_by_Y(a, params.n);
                 for (int i = 0; i < params.n; ++i) {
-                    r_snapsshots[frame_counter][i] = a[i].r;
+                    r_snapshots[frame_counter][i] = a[i].r;
                 }
             }
         }
@@ -60,13 +64,15 @@ int main(const int argc, char * const argv[]) {
             exit(EXIT_FAILURE);
         }
 
-        render__frames(params.n, r_snapsshots, params.n_frames, params.frame_W, params.frame_H, frames, params.box_radius);
+        render__frames(params.n, r_snapshots, params.n_frames, params.frame_W, params.frame_H, frames, params.box_radius);
 
         render__animation(params.frame_W, params.frame_H, params.n_frames, frames, params.fps, params.output_filename);
 
         free(frames);
     )
 #endif
+
+    free(r_snapshots);
 
     putchar('\n');
     return EXIT_SUCCESS;
