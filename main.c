@@ -39,7 +39,7 @@ int main(const int argc, char * const argv[]) {
 
             physics__update(a, params.n, update_time_step, params.box_radius);
 
-            if unlikely(((t+1) * update_time_step) - (frame_counter * frame_time_step) >= frame_time_step) {
+            if unlikely((t * update_time_step) - (frame_counter * frame_time_step) >= frame_time_step) {
                 ++frame_counter;
 
                 printf("\rT: %7.3f\tP: %7.3f\tupdate: %4d/%d\tsnapshot: %3d/%d", physics__thermometer(a, params.n), physics__barometer(a, params.n, params.box_radius), t+1, params.n_updates, frame_counter+1, params.n_frames);
