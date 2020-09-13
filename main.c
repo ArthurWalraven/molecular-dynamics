@@ -54,6 +54,7 @@ int main(const int argc, char * const argv[]) {
 
 
 #ifdef DORENDER
+    BENCH("Rendering",
     printf("Allocating animation buffer: [%d] %dx%d GIF (pixel stream of %.2f MiB)\n", params.n_frames, params.frame_W, params.frame_H, (params.n_frames * params.frame_H * params.frame_W) / 0x1p20f);
     uint8_t (*frames)[params.frame_H][params.frame_W] = calloc(params.n_frames * params.frame_H * params.frame_W, sizeof(frames[0][0][0]));
     if (!frames) {
@@ -66,6 +67,7 @@ int main(const int argc, char * const argv[]) {
     render__animation(params.frame_W, params.frame_H, params.n_frames, frames, params.fps, params.output_filename);
 
     free(frames);
+    )
 #endif
 
     putchar('\n');
