@@ -281,7 +281,7 @@ void render__frames(const int n, vec positions[][n], const int n_frames, const i
         .y = H / 2.f
     };
 
-    #pragma omp parallel for schedule(static)
+    #pragma omp parallel for schedule(auto)
     for (int f = 0; f < n_frames; ++f) {
         int s = 0;
         int t = 0;
