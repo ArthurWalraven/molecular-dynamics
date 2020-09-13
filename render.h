@@ -16,7 +16,7 @@
 #include "physics.h"
 
 
-void render__frame(atom a[], const int n, const int W, const int H, uint8_t frame[][W], const float box_radius);
+void render__frames(const int n, vec positions[][n], const int n_frames, const int W, const int H, uint8_t frame[][H][W], const float box_radius);
 void render__animation(const int W, const int H, const int T, const uint8_t frame[][H][W], const float FPS, const char * filename);
 
 void render__test_BMP();

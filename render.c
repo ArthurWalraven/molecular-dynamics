@@ -274,66 +274,67 @@ static void to_GIF(const int W, const int H, const int T, const uint8_t frame[][
 }
 
 
-void render__frame(atom a[], const int n, const int W, const int H, uint8_t frame[][W], const float box_radius) {
-    physics__sort_by_Y(a, n);
+void render__frames(const int n, vec positions[][n], const int n_frames, const int W, const int H, uint8_t frame[][H][W], const float box_radius) {
 
     const vec canvas_origin = {
         .x = W / 2.f,
         .y = H / 2.f
     };
 
-    int s = 0;
-    int t = 0;
-    #pragma omp parallel for schedule(static) firstprivate(s, t)
-    for (int i = 0; i < H; ++i) {
-        vec v = {.y = -(i - canvas_origin.y) * box_radius / (W / 2.f)};
+    #pragma omp parallel for schedule(static)
+    for (int f = 0; f < n_frames; ++f) {
+        int s = 0;
+        int t = 0;
+        for (int i = 0; i < H; ++i) {
+            vec v = {.y = -(i - canvas_origin.y) * box_radius / (W / 2.f)};
 
-        while ((s < n) && (a[s].r.y - RENDER_RADIUS > v.y)) {
-            ++s;
-        }
-        while ((t < n) && (a[t].r.y + RENDER_RADIUS > v.y)) {
-            ++t;
-        }
+            while ((s < n) && (positions[f][s].y - RENDER_RADIUS > v.y)) {
+                ++s;
+            }
+            while ((t < n) && (positions[f][t].y + RENDER_RADIUS > v.y)) {
+                ++t;
+            }
 
-        for (int j = 0; j < W; ++j) {
-            v.x = (j - canvas_origin.x) * box_radius / (W / 2.f);
+            for (int j = 0; j < W; ++j) {
+                v.x = (j - canvas_origin.x) * box_radius / (W / 2.f);
 
-            for (int k = s; k < t; ++k) {
-                vec r = sub(v, a[k].r);
+                for (int k = s; k < t; ++k) {
+                    vec r = sub(v, positions[f][k]);
 
 #ifdef PBC
-                r = physics__periodic_boundary_shift(r, box_radius);
+                    r = physics__periodic_boundary_shift(r, box_radius);
 #endif
 
-                colour_pixel(&frame[i][j], r);
-            }
+                    colour_pixel(&frame[f][i][j], r);
+                }
 
 #ifdef PBC
-            if unlikely(v.y > box_radius - RENDER_RADIUS) {
-                for (int k = n-1; k >= 0; --k) {
-                    if (a[k].r.y + 2 * box_radius - RENDER_RADIUS > v.y) {
-                        break;
+                if unlikely(v.y > box_radius - RENDER_RADIUS) {
+                    for (int k = n-1; k >= 0; --k) {
+                        if (positions[f][k].y + 2 * box_radius - RENDER_RADIUS > v.y) {
+                            break;
+                        }
+
+                        vec r = sub(v, to_vec(positions[f][k].x, positions[f][k].y + 2 * box_radius));
+                        r = physics__periodic_boundary_shift(r, box_radius);
+
+                        colour_pixel(&frame[f][i][j], r);
                     }
-
-                    vec r = sub(v, to_vec(a[k].r.x, a[k].r.y + 2 * box_radius));
-                    r = physics__periodic_boundary_shift(r, box_radius);
-
-                    colour_pixel(&frame[i][j], r);
                 }
-            }
-            else if unlikely(v.y < -box_radius + RENDER_RADIUS) {
-                for (int k = 0; k < n; ++k) {
-                    if (a[k].r.y - 2 * box_radius + RENDER_RADIUS < v.y) {
-                        break;
+                else if unlikely(v.y < -box_radius + RENDER_RADIUS) {
+                    for (int k = 0; k < n; ++k) {
+                        if (positions[f][k].y - 2 * box_radius + RENDER_RADIUS < v.y) {
+                            break;
+                        }
+
+                        vec r = sub(v, to_vec(positions[f][k].x, positions[f][k].y - 2 * box_radius));
+                        r = physics__periodic_boundary_shift(r, box_radius);
+
+                        colour_pixel(&frame[f][i][j], r);
                     }
-
-                    vec r = sub(v, to_vec(a[k].r.x, a[k].r.y - 2 * box_radius));
-                    r = physics__periodic_boundary_shift(r, box_radius);
-
-                    colour_pixel(&frame[i][j], r);
                 }
-            }
 #endif
+            }
         }
     }
 }
