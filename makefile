@@ -7,7 +7,7 @@ OUTPUT = animation.gif
 PROFDIR = profile
 
 CC = clang-10
-WFLAGS = -Wall -Wextra -Wwrite-strings -Wshadow
+WFLAGS = -Werror -Wall -Wextra -Wwrite-strings -Wshadow
 CFLAGS = -flto -march=native -ffast-math -D THREAD_COUNT=$$(grep -c ^processor /proc/cpuinfo)
 LFLAGS = $(CFLAGS)
 LIBS = -lm -fopenmp
