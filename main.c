@@ -30,7 +30,7 @@ int main(const int argc, char * const argv[]) {
         exit(EXIT_FAILURE);
     }
     
-    //* Simulation
+
     BENCH("Simulation",
         int frame_counter = -1;
         for (int t = 0; t < params.n_updates; ++t) {
@@ -52,7 +52,6 @@ int main(const int argc, char * const argv[]) {
         }
         putchar('\n');
     )
-    //*/
 
 
 #ifdef DORENDER
