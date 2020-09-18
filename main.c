@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <malloc.h>
 #include <assert.h>
 
 #include "global.h"
@@ -21,10 +22,10 @@ int main(const int argc, char * const argv[]) {
 
     const Params params = process_arguments(argc, argv);
 
-    atom a[params.n];
+    atom a[params.n] __attribute__ ((aligned(64)));
     physics__lattice_populate(a, params.n, params.box_radius, params.avg_speed);
 
-    vec (*r_snapshots)[params.n] = malloc(params.n_frames * params.n * sizeof(r_snapshots[0][0]));
+    vec (*r_snapshots)[params.n] = memalign(64, params.n_frames * params.n * sizeof(r_snapshots[0][0]));
     if (!r_snapshots) {
         perror("Error on position snapshot buffer creation");
         exit(EXIT_FAILURE);

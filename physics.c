@@ -1,7 +1,7 @@
 #include "physics.h"
 
 
-inline void physics__lattice_populate(atom a[], const int n, const float box_radius, const float energy) {
+inline void physics__lattice_populate(atom a_[], const int n, const float box_radius, const float energy) {
     assert(box_radius > 0);
     assert(n >= 0);
 
@@ -9,6 +9,8 @@ inline void physics__lattice_populate(atom a[], const int n, const float box_rad
     assert(2 * sq(m) == n  && "'n / 2' needs to be a perfect square");
 
     const float lattice_step = 2 * box_radius / (m - 0);
+    
+    atom *a = __builtin_assume_aligned(a_, 64);
 
     for (int i = 0; i < m; ++i) {
         for (int j = 0; j < m; ++j) {
@@ -43,7 +45,9 @@ inline void physics__lattice_populate(atom a[], const int n, const float box_rad
 }
 
 // Insertion sort
-void physics__sort_by_Y(atom a[], const int n) {
+void physics__sort_by_Y(atom a_[], const int n) {
+    atom *a = __builtin_assume_aligned(a_, 64);
+
     for (int i = 1; i < n; ++i) {
         if unlikely(a[i].r.y > a[i-1].r.y) {
             int j = i-2;
@@ -114,7 +118,9 @@ static inline atom wall_bounce(atom a, const float box_radius) {
 }
 
 // Velocity verlet
-inline void physics__update(atom a[], const int n, const float dt, const float box_radius) {
+inline void physics__update(atom a_[], const int n, const float dt, const float box_radius) {
+    atom *a = __builtin_assume_aligned(a_, 64);
+
     vec accs[THREAD_COUNT][n] __attribute__ ((aligned (64)));
 
     #pragma omp parallel
@@ -168,7 +174,9 @@ inline void physics__update(atom a[], const int n, const float dt, const float b
     }
 }
 
-float physics__thermometer(const atom a[], const int n) {
+float physics__thermometer(const atom a_[], const int n) {
+    atom *a = __builtin_assume_aligned(a_, 64);
+
     static float T = 0;
     static int N = 0;
     
@@ -184,7 +192,9 @@ float physics__thermometer(const atom a[], const int n) {
     return T;
 }
 
-float physics__barometer(const atom a[], const int n, const float box_radius) {
+float physics__barometer(const atom a_[], const int n, const float box_radius) {
+    atom *a = __builtin_assume_aligned(a_, 64);
+
     static float P = 0;
     static int N = 0;
     
