@@ -41,7 +41,7 @@ $(OUTPUT): $(TARGET)
 all: $(TARGET)
 
 clean:
-	$(RM) $(TARGET) $(TARGET).d $(DEPS) $(OBJS) $(OUTPUT)
+	$(RM) $(TARGET) $(TARGET).d $(DEPS) $(OBJS) $(OUTPUT) $(ODIR)/*.opt.yaml profile/*.opt.yaml
 
 debug:
 	$(CC) $(SRCS) $(WFLAGS) $(CFLAGS) $(DFLAGS) -o $(TARGET) $(WFLAGS) $(DLFLAGS) $(LIBS) $(CFLAGS)
@@ -67,7 +67,8 @@ sample: $(TARGET)
 	ls -lah samples/sample.gif
 
 time:
-	$(CC) $(SRCS) $(WFLAGS) $(CFLAGS) $(OFLAGS) -DNRENDER -o $(TARGET) $(WFLAGS) $(LFLAGS) $(LIBS) $(CFLAGS)
+	$(CC) $(SRCS) $(WFLAGS) $(CFLAGS) $(OFLAGS) -Rpass-analysis=loop-vectorize -fsave-optimization-record -DNRENDER -o $(TARGET) $(WFLAGS) $(LFLAGS) $(LIBS) $(CFLAGS)
+	mv *.opt.yaml $(ODIR)/
 	./$(TARGET) --n=1682 --time=100.0 --box-radius=29.0 --avg-speed=1.0 --ups=1000.0 --fps=50.0 --resolution=480 --output-file=$(OUTPUT)
 
 bench: $(PROFDIR)
