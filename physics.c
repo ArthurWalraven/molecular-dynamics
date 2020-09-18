@@ -44,9 +44,7 @@ inline void physics__lattice_populate(atom a_[], const int n, const float box_ra
     }
 }
 
-// Insertion sort
-void physics__sort_by_Y(atom a_[], const int n) {
-    atom *a = __builtin_assume_aligned(a_, 64);
+// Insertion sort (the fastest for almost sorted arrays)
 
     for (int i = 1; i < n; ++i) {
         if unlikely(a[i].r.y > a[i-1].r.y) {
