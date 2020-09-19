@@ -121,7 +121,7 @@ static inline void wall_bounce(vec * restrict r, vec * restrict v, const float b
 
 // Velocity verlet
 inline void physics__update(vec r_[], vec v_[], vec a_[], const int n, const float dt, const float box_radius) {
-    vec * restrict r = __builtin_assume_aligned(r_, 64); // TODO: 'restrict'
+    vec * restrict r = __builtin_assume_aligned(r_, 64);
     vec * restrict v = __builtin_assume_aligned(v_, 64);
     vec * restrict a = __builtin_assume_aligned(a_, 64);
 
