@@ -27,14 +27,14 @@
 	struct timespec cpu_time_start;\
 	struct timespec real_time_start;\
 	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &cpu_time_start);\
-	clock_gettime(CLOCK_REALTIME, &real_time_start);\
+	clock_gettime(CLOCK_MONOTONIC_RAW , &real_time_start);\
 \
 	{exp}\
 \
 	struct timespec cpu_time_end;\
 	struct timespec real_time_end;\
 	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &cpu_time_end);\
-	clock_gettime(CLOCK_REALTIME, &real_time_end);\
+	clock_gettime(CLOCK_MONOTONIC_RAW , &real_time_end);\
 \
 	printf("End: " str "\t(Ellapsed time: CPU %.4fs\tReal %.4fs)\n",\
 		(cpu_time_end.tv_sec - cpu_time_start.tv_sec)\
