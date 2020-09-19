@@ -2,8 +2,8 @@
 
 
 inline void physics__lattice_populate(vec r_[], vec v_[], const int n, const float box_radius, const float energy) {
-    vec * r = __builtin_assume_aligned(r_, 64);
-    vec * v = __builtin_assume_aligned(v_, 64);
+    vec * restrict r = __builtin_assume_aligned(r_, 64);
+    vec * restrict v = __builtin_assume_aligned(v_, 64);
 
 
     assert(box_radius > 0);
@@ -45,8 +45,8 @@ inline void physics__lattice_populate(vec r_[], vec v_[], const int n, const flo
 
 // Insertion sort (the fastest for almost sorted arrays)
 void physics__sort_by_Y(vec r_[], vec v_[], const int n) {
-    vec * r = __builtin_assume_aligned(r_, 64);
-    vec * v = __builtin_assume_aligned(v_, 64);
+    vec * restrict r = __builtin_assume_aligned(r_, 64);
+    vec * restrict v = __builtin_assume_aligned(v_, 64);
 
 
     for (int i = 1; i < n; ++i) {
@@ -121,9 +121,9 @@ static inline void wall_bounce(vec * restrict r, vec * restrict v, const float b
 
 // Velocity verlet
 inline void physics__update(vec r_[], vec v_[], vec a_[], const int n, const float dt, const float box_radius) {
-    vec * r = __builtin_assume_aligned(r_, 64); // TODO: 'restrict'
-    vec * v = __builtin_assume_aligned(v_, 64);
-    vec * a = __builtin_assume_aligned(a_, 64);
+    vec * restrict r = __builtin_assume_aligned(r_, 64); // TODO: 'restrict'
+    vec * restrict v = __builtin_assume_aligned(v_, 64);
+    vec * restrict a = __builtin_assume_aligned(a_, 64);
 
     vec accs[THREAD_COUNT][n] __attribute__ ((aligned (64)));
 
@@ -179,7 +179,7 @@ inline void physics__update(vec r_[], vec v_[], vec a_[], const int n, const flo
 }
 
 float physics__thermometer(const vec v_[], const int n) {
-    const vec * v = __builtin_assume_aligned(v_, 64);
+    const vec * restrict v = __builtin_assume_aligned(v_, 64);
 
     static float T = 0;
     static int N = 0;
