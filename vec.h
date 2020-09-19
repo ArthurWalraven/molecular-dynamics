@@ -17,76 +17,94 @@ typedef struct {
 } vec;
 
 
-__always_inline
-vec to_vec(const float x, const float y) {
-    return (vec) {.x = x, .y = y};
-}
+#define assert_type(type, exp) assert(__builtin_types_compatible_p(type, typeof(exp)))
 
-__always_inline
-vec add(const vec a, const vec b) {
-    return (vec) {
-        .x = a.x + b.x,
-        .y = a.y + b.y
-    };
-}
 
-__always_inline
-vec sub(const vec a, const vec b) {
-    return (vec) {
-        .x = a.x - b.x,
-        .y = a.y - b.y
-    };
-}
+#define to_vec(x_, y_) ({\
+    (vec) {.x = x_, .y = y_};\
+})
 
-__always_inline
-vec mul(const vec a, const float x) {
-    return (vec) {
-        .x = a.x * x,
-        .y = a.y * x
-    };
-}
+#define add(a, b) ({\
+    assert_type(vec, a);\
+    assert_type(vec, b);\
+\
+    (vec) {\
+        .x = (a).x + (b).x,\
+        .y = (a).y + (b).y\
+    };\
+})
 
-__always_inline
-vec divide(const vec a, const float x) {
-    return (vec) {
-        .x = a.x / x,
-        .y = a.y / x
-    };
-}
+#define sub(a, b) ({\
+    assert_type(vec, a);\
+    assert_type(vec, b);\
+\
+    (vec) {\
+        .x = (a).x - (b).x,\
+        .y = (a).y - (b).y\
+    };\
+})
 
-__always_inline
-float dot(const vec a, const vec b) {
-    return (a.x * b.x + a.y * b.y);
-}
+#define mul(a, x_) ({\
+    assert_type(vec, a);\
+\
+    (vec) {\
+        .x = (a).x * x_,\
+        .y = (a).y * x_\
+    };\
+})
 
-__always_inline
-float norm_sq(const vec a) {
-    return dot(a, a);
-}
+#define divide(a, x_) ({\
+    assert_type(vec, a);\
+\
+    (vec) {\
+        .x = (a).x / x_,\
+        .y = (a).y / x_\
+    };\
+})
 
-__always_inline
-float norm(const vec a) {
-    return sqrtf(norm_sq(a));
-}
+#define dot(a, b) ({\
+    assert_type(vec, a);\
+    assert_type(vec, b);\
+\
+    ((a).x * (b).x + (a).y * (b).y);\
+})
 
-__always_inline
-float norm_max(const vec a) {
-    return fmaxf(fabsf(a.x), fabsf(a.y));
-}
+#define norm_sq(a) ({\
+    assert_type(vec, a);\
+\
+    dot(a, a);\
+})
 
-__always_inline
-float dist_sq(const vec a, const vec b) {
-    return norm_sq(sub(b, a));
-}
+#define norm(a) ({\
+    assert_type(vec, a);\
+\
+    sqrtf(norm_sq(a));\
+})
 
-__always_inline
-float dist(const vec a, const vec b) {
-    return norm(sub(b, a));
-}
+#define norm_max(a) ({\
+    assert_type(vec, a);\
+\
+    fmaxf(fabsf((a).x), fabsf((a).y));\
+})
 
-__always_inline
-vec normalize(const vec a) {
-    __m128 t = _mm_set_ss(norm_sq(a));
-    t = _mm_rsqrt_ss(t);
-    return mul(a, _mm_cvtss_f32(t));
-}
+#define dist_sq(a, b) ({\
+    assert_type(vec, a);\
+    assert_type(vec, b);\
+\
+    norm_sq(sub(b, a));\
+})
+
+#define dist(a, b) ({\
+    assert_type(vec, a);\
+    assert_type(vec, b);\
+\
+    norm(sub(b, a));\
+})
+
+#define normalize(a) ({\
+    assert_type(vec, a);\
+\
+    __m128 t_ = _mm_set_ss(norm_sq(a));\
+    t_ = _mm_rsqrt_ss(t_);\
+    mul(a, _mm_cvtss_f32(t_));\
+})
