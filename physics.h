@@ -11,16 +11,9 @@
 #include "random.h"
 
 
-typedef struct {
-    vec r;
-    vec v;
-    vec a;
-} atom;
-
-
-void physics__lattice_populate(atom a[], const int n, const float box_radius, const float energy);
-void physics__update(atom a[], const int n, const float dt, const float box_radius);
-void physics__sort_by_Y(atom a[], const int n);
+void physics__lattice_populate(vec r[], vec v[], const int n, const float box_radius, const float energy);
+void physics__update(vec r[], vec v[], vec a[], const int n, const float dt, const float box_radius);
+void physics__sort_by_Y(vec r[], vec v[], const int n);
 vec physics__periodic_boundary_shift(vec v, const float box_radius);
-float physics__thermometer(const atom a[], const int n);
-float physics__barometer(const atom a[], const int n, const float box_radius);
+float physics__thermometer(const vec v[], const int n);
+float physics__barometer(const vec v[], const int n, const float box_radius);

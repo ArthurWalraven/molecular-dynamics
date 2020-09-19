@@ -1,4 +1,4 @@
-SRCS = main.c global.c vec.c physics.c random.c read_args.c render.c
+SRCS = main.c global.c physics.c random.c read_args.c render.c
 ODIR = objs
 OBJS = $(patsubst %,$(ODIR)/%,$(SRCS:.c=.o))
 DEPS = $(OBJS:.o=.d)

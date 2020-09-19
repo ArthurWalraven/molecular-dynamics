@@ -22,8 +22,10 @@ int main(const int argc, char * const argv[]) {
 
     const Params params = process_arguments(argc, argv);
 
-    atom a[params.n] __attribute__ ((aligned(64)));
-    physics__lattice_populate(a, params.n, params.box_radius, params.avg_speed);
+    vec r[params.n] __attribute__ ((aligned(64)));
+    vec v[params.n] __attribute__ ((aligned(64)));
+    vec a[params.n] __attribute__ ((aligned(64)));
+    physics__lattice_populate(r, v, params.n, params.box_radius, params.avg_speed);
 
     vec (*r_snapshots)[params.n] = memalign(64, params.n_frames * params.n * sizeof(r_snapshots[0][0]));
     if (!r_snapshots) {
@@ -38,16 +40,16 @@ int main(const int argc, char * const argv[]) {
             const float update_time_step = params.simulation_time / params.n_updates;
             const float frame_time_step = params.simulation_time / params.n_frames;
 
-            physics__update(a, params.n, update_time_step, params.box_radius);
+            physics__update(r, v, a, params.n, update_time_step, params.box_radius);
 
             if unlikely((t * update_time_step) - (frame_counter * frame_time_step) >= frame_time_step) {
                 ++frame_counter;
 
-                printf("\rT: %7.3f\tP: %7.3f\tupdate: %4d/%d\tsnapshot: %3d/%d", physics__thermometer(a, params.n), physics__barometer(a, params.n, params.box_radius), t+1, params.n_updates, frame_counter+1, params.n_frames);
+                printf("\rT: %7.3f\tP: %7.3f\tupdate: %4d/%d\tsnapshot: %3d/%d", physics__thermometer(v, params.n), physics__barometer(v, params.n, params.box_radius), t+1, params.n_updates, frame_counter+1, params.n_frames);
 
-                physics__sort_by_Y(a, params.n);
+                physics__sort_by_Y(r, v, params.n);
                 for (int i = 0; i < params.n; ++i) {
-                    r_snapshots[frame_counter][i] = a[i].r;
+                    r_snapshots[frame_counter][i] = r[i];
                 }
             }
         }
