@@ -129,30 +129,30 @@ inline void physics__update(vec r_[], vec v_[], vec a_[], const int n, const flo
 
 
     #pragma omp simd aligned(v, a : 64)
-        for (int i = 0; i < n; ++i) {
+    for (int i = 0; i < n; ++i) {
         v[i].x += 0.5f * a[i].x * dt;
         v[i].y += 0.5f * a[i].y * dt;
     }
     
     #pragma omp simd aligned(r, v : 64)
     for (int i = 0; i < n; ++i) {
-            r[i].x += v[i].x * dt;
-            r[i].y += v[i].y * dt;
+        r[i].x += v[i].x * dt;
+        r[i].y += v[i].y * dt;
     }
 
     #pragma omp simd aligned(a : 64)
     for (int i = 0; i < n; ++i) {
-            a[i].x = 0;
-            a[i].y = 0;
+        a[i].x = 0;
+        a[i].y = 0;
     }
 
     #pragma omp simd aligned(accs : 64)
     for (int i = 0; i < n; ++i) {
-            for (int t = 0; t < THREAD_COUNT; ++t) {
-                accs[t][i] = to_vec(0, 0);
-            }
+        for (int t = 0; t < THREAD_COUNT; ++t) {
+            accs[t][i] = to_vec(0, 0);
         }
-        
+    }
+
 
     #pragma omp parallel
     {   
@@ -191,38 +191,24 @@ inline void physics__update(vec r_[], vec v_[], vec a_[], const int n, const flo
     }
 }
 
-float physics__thermometer(const vec v_[], const int n) {
-    const vec * restrict v = __builtin_assume_aligned(v_, 64);
+float physics__thermometer(const vec v[], const int n) {
+    float momentum = 0;
 
-    static float T = 0;
-    static int N = 0;
-    
-    float avg_momentum = 0;
-
+    #pragma omp simd aligned(v: 64) reduction(+: momentum)
     for (int i = 0; i < n; ++i) {
-        avg_momentum += (norm_sq(v[i]) - avg_momentum)/(i+1);
+        momentum += norm_sq(v[i]);
     }
 
-    T += (0.5f*avg_momentum - T) / ++N;
-
-
-    return T;
+    return (momentum * 0.5f) / n;
 }
 
-float physics__barometer(const vec v_[], const int n, const float box_radius) {
-    const vec * v = __builtin_assume_aligned(v_, 64);
+float physics__barometer(const vec v[], const int n, const float box_radius) {
+    float momentum = 0;
 
-    static float P = 0;
-    static int N = 0;
-    
-    float avg_momentum = 0;
-
+    #pragma omp simd aligned(v: 64) reduction(+: momentum)
     for (int i = 0; i < n; ++i) {
-        avg_momentum += (norm_sq(v[i]) - avg_momentum)/(i+1);
+        momentum += norm_sq(v[i]);
     }
 
-    P += ((0.5f * n * avg_momentum / sq(2 * box_radius)) - P) / ++N;
-
-
-    return P;
+    return (0.5f * momentum) / sq(2 * box_radius);
 }
