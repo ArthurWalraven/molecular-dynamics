@@ -1,7 +1,6 @@
 #include "physics.h"
 
-
-inline void physics__lattice_populate(vec r_[], vec v_[], const int n, const float box_radius, const float energy) {
+void physics__lattice_populate(vec r_[], vec v_[], const int n, const float box_radius, const float energy) {
     vec * restrict r = __builtin_assume_aligned(r_, 64);
     vec * restrict v = __builtin_assume_aligned(v_, 64);
 
@@ -15,10 +14,12 @@ inline void physics__lattice_populate(vec r_[], vec v_[], const int n, const flo
     const float lattice_step = 2 * box_radius / (m - 0);
 
     for (int i = 0; i < m; ++i) {
+        #pragma omp simd aligned(r: 64)
         for (int j = 0; j < m; ++j) {
             r[(i * m) + j].x = -box_radius + j * lattice_step;
             r[(i * m) + j].y = -box_radius + i * lattice_step;
         }
+        #pragma omp simd aligned(r: 64)
         for (int j = 0; j < m; ++j) {
             r[sq(m) + (i * m) + j].x = -box_radius + (j + 0.5f) * lattice_step;
             r[sq(m) + (i * m) + j].y = -box_radius + (i + 0.5f) * lattice_step;
@@ -30,13 +31,15 @@ inline void physics__lattice_populate(vec r_[], vec v_[], const int n, const flo
     }
 
     // Zero the average moment
-    vec v_avg = {0, 0};
+    vec v_avg = to_vec(0, 0);
+    #pragma omp simd aligned(v: 64)
     for (int i = 0; i < n; ++i)
     {
         v_avg = add(v_avg, v[i]);
     }
     v_avg = mul(v_avg, 1.f/n);
     
+    #pragma omp simd aligned(v: 64)
     for (int i = 0; i < n; ++i)
     {
         v[i] = sub(v[i], v_avg);
@@ -179,8 +182,8 @@ inline void physics__update(vec r_[], vec v_[], vec a_[], const int n, const flo
                 a[i] = add(a[i], accs[t][i]);
             }
 
-            v[i].x += 0.5 * a[i].x * dt;
-            v[i].y += 0.5 * a[i].y * dt;
+            v[i].x += 0.5f * a[i].x * dt;
+            v[i].y += 0.5f * a[i].y * dt;
 
 #ifdef PBC
             r[i] = physics__periodic_boundary_shift(r[i], box_radius);
