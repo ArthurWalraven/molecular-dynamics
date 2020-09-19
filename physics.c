@@ -127,22 +127,35 @@ inline void physics__update(vec r_[], vec v_[], vec a_[], const int n, const flo
 
     vec accs[THREAD_COUNT][n] __attribute__ ((aligned (64)));
 
-    #pragma omp parallel
-    {
-        #pragma omp for schedule(static)
+
+    #pragma omp simd aligned(v, a : 64)
         for (int i = 0; i < n; ++i) {
-            v[i].x += 0.5 * a[i].x * dt;
-            v[i].y += 0.5 * a[i].y * dt;
+        v[i].x += 0.5f * a[i].x * dt;
+        v[i].y += 0.5f * a[i].y * dt;
+    }
+    
+    #pragma omp simd aligned(r, v : 64)
+    for (int i = 0; i < n; ++i) {
             r[i].x += v[i].x * dt;
             r[i].y += v[i].y * dt;
+    }
+
+    #pragma omp simd aligned(a : 64)
+    for (int i = 0; i < n; ++i) {
             a[i].x = 0;
             a[i].y = 0;
+    }
 
+    #pragma omp simd aligned(accs : 64)
+    for (int i = 0; i < n; ++i) {
             for (int t = 0; t < THREAD_COUNT; ++t) {
                 accs[t][i] = to_vec(0, 0);
             }
         }
         
+
+    #pragma omp parallel
+    {   
         #pragma omp for schedule(auto)
         for (int i = 0; i < n-1; ++i) {
             for (int j = i+1; j < n; ++j) {
