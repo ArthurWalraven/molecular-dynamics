@@ -72,8 +72,8 @@ time:
 	./$(TARGET) --n=1682 --time=100.0 --box-radius=29.0 --avg-speed=1.0 --ups=1000.0 --fps=50.0 --resolution=480 --output-file=$(OUTPUT)
 
 bench: $(PROFDIR)
-	$(CC) $(SRCS) $(WFLAGS) $(CFLAGS) $(DFLAGS) -o $(TARGET) $(WFLAGS) $(DLFLAGS) $(LIBS)
-	valgrind --tool=callgrind --callgrind-out-file=$(PROFDIR)/latest.out ./$(TARGET) --n=200 --time=1.0 --box-radius=15.0 --avg-speed=1.0 --ups=1000.0 --fps=50.0 --resolution=100 --output-file=animation.gif
+	$(CC) $(SRCS) $(WFLAGS) $(CFLAGS) $(DFLAGS) -DNRENDER -o $(TARGET) $(WFLAGS) $(DLFLAGS) $(LIBS)
+	valgrind --tool=callgrind --callgrind-out-file=$(PROFDIR)/latest.out ./$(TARGET) --n=1682 --time=1.0 --box-radius=29.0 --avg-speed=1.0 --ups=100.0 --fps=50.0 --resolution=100 --output-file=animation.gif
 	callgrind_annotate --auto=yes $(PROFDIR)/latest.out > $(PROFDIR)/latest.log
 	code $(PROFDIR)/latest.log
 
