@@ -163,12 +163,15 @@ inline void physics__update(vec r_[], vec v_[], vec a_[], const int n, const flo
         for (int i = 0; i < n-1; ++i) {
             for (int j = i+1; j < n; ++j) {
                 vec dr = sub(r[j], r[i]);
+#ifdef PBC
                 dr = physics__periodic_boundary_shift(dr, box_radius);
+#endif
 
                 const float recip_drdr = 1/dot(dr, dr);
+                const float recip_drdr_cube = recip_drdr * recip_drdr * recip_drdr;
 
                 // Gradient of the Lennard-Jones potential
-                const vec acc = mul(dr, -24 * recip_drdr * ( 2 * powf(recip_drdr, 6) - powf(recip_drdr, 3)));
+                const vec acc = mul(dr, -24 * recip_drdr * ( 2 * recip_drdr_cube * recip_drdr_cube - recip_drdr_cube));
 
                 const int t = omp_get_thread_num();
                 accs[t][i] = add(accs[t][i], acc);
@@ -179,7 +182,8 @@ inline void physics__update(vec r_[], vec v_[], vec a_[], const int n, const flo
         #pragma omp for schedule(static)
         for (int i = 0; i < n; ++i) {
             for (int t = 0; t < THREAD_COUNT; ++t) {
-                a[i] = add(a[i], accs[t][i]);
+                a[i].x += accs[t][i].x;
+                a[i].y += accs[t][i].y;
             }
 
             v[i].x += 0.5f * a[i].x * dt;
